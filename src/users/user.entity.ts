@@ -12,16 +12,10 @@ export class User {
     @Column()
     apellido: string
 
-    @Column()
-    genero: string
-
     @Column({ unique: true })
     correo: string
 
     @Column()
     contrasena: string
-
-    @Column()
-    fechanac: Date
 
 }
