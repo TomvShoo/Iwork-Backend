@@ -3,6 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import {TypeOrmModule} from '@nestjs/typeorm'
+import { ProfesionalModule } from './profesional/profesional.module';
+import { CartaTrabajoModule } from './carta-trabajo/carta-trabajo.module';
+import { ProfesionModule } from './profesion/profesion.module';
+import { PortafolioModule } from './portafolio/portafolio.module';
 
 @Module({
   imports: [
@@ -16,7 +20,11 @@ import {TypeOrmModule} from '@nestjs/typeorm'
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true 
     }),
-    UsersModule],
+    UsersModule,
+    ProfesionalModule,
+    CartaTrabajoModule,
+    ProfesionModule,
+    PortafolioModule],
   controllers: [AppController],
   providers: [AppService],
 })

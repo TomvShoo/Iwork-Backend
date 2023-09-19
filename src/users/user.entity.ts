@@ -18,4 +18,7 @@ export class User {
     @Column()
     contrasena: string
 
+    @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+    CreatedAt: Date
+
 }
