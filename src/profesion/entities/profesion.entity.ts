@@ -1,4 +1,5 @@
-import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { Profesional } from "src/profesional/entities/profesional.entity";
+import { Column, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 export class Profesion {
     
@@ -8,9 +9,9 @@ export class Profesion {
     @Column()
     nombre_profesion: string
 
-    @Column()
-    
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
+    @ManyToOne(() => Profesional, profesional => profesional.tipoProfesion)
+    dueno: Profesional
 }

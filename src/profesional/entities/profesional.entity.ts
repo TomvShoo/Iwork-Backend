@@ -1,5 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from "typeorm";
 import { Portafolio } from "src/portafolio/entities/portafolio.entity";
+import { CartaTrabajo } from "src/carta-trabajo/entities/carta-trabajo.entity";
+import { Profesion } from "src/profesion/entities/profesion.entity";
 
 @Entity('profesional')
 export class Profesional {
@@ -33,4 +35,10 @@ export class Profesional {
     @OneToOne(() => Portafolio)
     @JoinColumn()
     portafolio: Portafolio
+
+    @OneToMany(() => CartaTrabajo, carta => carta.author)
+    cartas: CartaTrabajo[]
+
+    @OneToMany(() => Profesion, profesion => profesion.dueno)
+    tipoProfesion: Profesion[]
 }

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { CartaTrabajo } from "src/carta-trabajo/entities/carta-trabajo.entity";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 @Entity({ name: 'cliente' })
 export class User {
@@ -21,4 +22,6 @@ export class User {
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
+    @OneToMany(() => CartaTrabajo, carta => carta.author)
+    cartas: CartaTrabajo[]
 }

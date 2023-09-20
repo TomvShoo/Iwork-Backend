@@ -3,32 +3,34 @@ import { CartaTrabajoService } from './carta-trabajo.service';
 import { CreateCartaTrabajoDto } from './dto/create-carta-trabajo.dto';
 import { UpdateCartaTrabajoDto } from './dto/update-carta-trabajo.dto';
 
-@Controller('carta-trabajo')
+@Controller('cartaTrabajo')
 export class CartaTrabajoController {
-  constructor(private readonly cartaTrabajoService: CartaTrabajoService) {}
+  
+  constructor(private cartaTrabajoService: CartaTrabajoService) {}
+
 
   @Post()
-  create(@Body() createCartaTrabajoDto: CreateCartaTrabajoDto) {
-    return this.cartaTrabajoService.create(createCartaTrabajoDto);
+  createCard(@Body() carta: CreateCartaTrabajoDto) {
+    return this.cartaTrabajoService.createCarta(carta);
   }
 
   @Get()
   findAll() {
-    return this.cartaTrabajoService.findAll();
+    return this.cartaTrabajoService.findAllCarta();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartaTrabajoService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.cartaTrabajoService.findOneCarta(+id);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartaTrabajoDto: UpdateCartaTrabajoDto) {
-    return this.cartaTrabajoService.update(+id, updateCartaTrabajoDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateCartaTrabajoDto: UpdateCartaTrabajoDto) {
+  //   return this.cartaTrabajoService.updateCarta(+id, updateCartaTrabajoDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartaTrabajoService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.cartaTrabajoService.removeCarta(+id);
+  // }
 }

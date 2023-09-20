@@ -1,26 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateCartaTrabajoDto } from './dto/create-carta-trabajo.dto';
 import { UpdateCartaTrabajoDto } from './dto/update-carta-trabajo.dto';
+import { UsersService } from 'src/users/users.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CartaTrabajo } from './entities/carta-trabajo.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CartaTrabajoService {
-  create(createCartaTrabajoDto: CreateCartaTrabajoDto) {
-    return 'This action adds a new cartaTrabajo';
+
+  constructor(@InjectRepository(CartaTrabajo) private cartaRepository: Repository<CartaTrabajo>,
+  private userService: UsersService) {}
+
+  async createCarta(carta: CreateCartaTrabajoDto) {
+    const userFound = await this.userService.getUser(carta.id_profesional)
+    
+    if(!userFound) {
+      return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND)
+    }
+
+    const newCarta = this.cartaRepository.create(carta);
+    return this.cartaRepository.save(newCarta);
   }
 
-  findAll() {
-    return `This action returns all cartaTrabajo`;
+  findAllCarta() {
+    return this.cartaRepository.find({
+      relations: ['author']
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cartaTrabajo`;
-  }
+  // findOneCarta(id: number) {
+  //   return `This action returns a #${id} cartaTrabajo`;
+  // }
 
-  update(id: number, updateCartaTrabajoDto: UpdateCartaTrabajoDto) {
-    return `This action updates a #${id} cartaTrabajo`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} cartaTrabajo`;
-  }
 }
