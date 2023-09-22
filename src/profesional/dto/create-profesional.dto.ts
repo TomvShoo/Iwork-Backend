@@ -4,6 +4,6 @@ export class CreateProfesionalDto {
     correo: string
     constrasena: string
     calificacion: number
-    resenas: string
+    resenas?: string
     nroTelefono: number
 }
