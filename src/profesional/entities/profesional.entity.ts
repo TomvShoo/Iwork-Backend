@@ -17,13 +17,13 @@ export class Profesional {
     @Column({ unique: true })
     correo: string
 
-    @Column()
+    @Column({ nullable: false })
     contrasena: string
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     calificacion: number
 
-    @Column({nullable: true})
+    @Column( {nullable: true })
     resenas: string
 
     @Column()
