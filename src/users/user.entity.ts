@@ -19,6 +19,12 @@ export class User {
     @Column()
     contrasena: string
 
+    @Column()
+    nroTelefono: string
+
+    @Column({ default: 'user' })
+    role: string;
+
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 

@@ -14,13 +14,25 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) {}
 
-    async register({ nombre, apellido, correo, contrasena }: RegisterDto) {
-        return await this.userService.createUser({ 
+    async register({ nombre, apellido, correo, contrasena, nroTelefono }: RegisterDto) {
+        const user = await this.userService.findOneByEmail(correo); 
+        
+        if(user) {
+            throw new BadRequestException('Usuario ya existe');
+        }
+
+        await this.userService.createUser({ 
             nombre, 
             apellido, 
             correo, 
-            contrasena: await bcrypt.hash(contrasena, 10)
+            contrasena: await bcrypt.hash(contrasena, 10),
+            nroTelefono,
         });
+
+        return {
+            nombre,
+            correo,
+        }
     }
 
     async login({ correo, contrasena }: LoginDto) {
@@ -34,7 +46,7 @@ export class AuthService {
             throw new UnauthorizedException('Contrasena es incorrecta');
         }
 
-        const payload = { correo: user.correo };
+        const payload = { correo: user.correo, role: user.role };
         const token =  await this.jwtService.signAsync(payload);
 
         return {
@@ -43,4 +55,8 @@ export class AuthService {
         };
     }
 
+    async profile({ correo, role }: {correo: string; role: string;}) {
+        
+        return await this.userService.findOneByEmail(correo);
+    } 
 }

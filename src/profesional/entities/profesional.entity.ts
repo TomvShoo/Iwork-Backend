@@ -6,35 +6,38 @@ import { Profesion } from "src/profesion/entities/profesion.entity";
 @Entity('profesional')
 export class Profesional {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    nombre: string
+    nombre: string;
 
     @Column()
-    apellido: string
+    apellido: string;
 
     @Column({ unique: true })
-    correo: string
+    correo: string;
 
     @Column({ nullable: false })
-    contrasena: string
-
+    contrasena: string;
+    
     @Column({ nullable: true })
-    calificacion: number
+    calificacion: number;
 
     @Column( {nullable: true })
-    resenas: string
+    resenas: string;
 
     @Column()
-    nroTelefono: number
+    nroTelefono: number;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
+    @Column({ default: 'user' })
+    role: string;
+
     @OneToOne(() => Portafolio)
     @JoinColumn()
-    portafolio: Portafolio
+    portafolio: Portafolio;
 
     @OneToMany(() => CartaTrabajo, carta => carta.author)
     cartas: CartaTrabajo[]

@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsString, IsEmail, MinLength } from "class-validator";
+import { IsString, IsEmail, MinLength, IsNumber, MaxLength, Length } from "class-validator";
 
 export class RegisterDto {
 
@@ -14,6 +14,10 @@ export class RegisterDto {
     @IsEmail()
     correo: string;
 
+    @IsString()
+    @Length(8, 8, { message: 'El número de teléfono debe tener exactamente 8 caracteres' })
+    nroTelefono: string;
+    
     @IsString()
     @MinLength(8)
     contrasena: string;
