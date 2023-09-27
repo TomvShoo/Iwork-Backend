@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
 
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
-
+ 
     async createUser(user: CreateUserDto) {
         const userfound = await this.userRepository.findOne({
             where: {
@@ -27,6 +27,13 @@ export class UsersService {
 
     findOneByEmail(correo: string) {
         return this.userRepository.findOneBy({ correo })
+    }
+
+    findByEmailwithPassword(correo: string) {
+        return this.userRepository.findOne({
+            where: { correo },
+            select: ['id', 'nombre','apellido','correo','contrasena',]
+        })
     }
 
     getUsers(){

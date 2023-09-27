@@ -23,13 +23,14 @@ export class AuthService {
 
         await this.userService.createUser({ 
             nombre, 
-            apellido, 
+            apellido,
+            nroTelefono, 
             correo, 
             contrasena: await bcrypt.hash(contrasena, 10),
-            nroTelefono,
         });
 
         return {
+            success: true,
             nombre,
             correo,
         }
@@ -50,8 +51,8 @@ export class AuthService {
         const token =  await this.jwtService.signAsync(payload);
 
         return {
-            token,
-            correo
+            success: true,
+            data: token
         };
     }
 

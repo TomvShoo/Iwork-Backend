@@ -1,5 +1,6 @@
 import { Transform } from "class-transformer";
-import { IsString, IsEmail, MinLength, IsNumber, MaxLength, Length } from "class-validator";
+import { IsString, IsEmail, MinLength, IsNumber, MaxLength, Length, IsNotEmpty, IsEnum } from "class-validator";
+import { Role } from "../enums/rol.enum";
 
 export class RegisterDto {
 
@@ -17,6 +18,10 @@ export class RegisterDto {
     @IsString()
     @Length(8, 8, { message: 'El número de teléfono debe tener exactamente 8 caracteres' })
     nroTelefono: string;
+
+    // @IsNotEmpty()
+    // @IsEnum(Role)
+    // tipoCuenta: Role;
     
     @IsString()
     @MinLength(8)

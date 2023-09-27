@@ -3,7 +3,7 @@ export class CreateProfesionalDto {
     apellido: string
     correo: string
     constrasena: string
-    calificacion: number
+    calificacion?: number
     resenas?: string
     nroTelefono: number
 }

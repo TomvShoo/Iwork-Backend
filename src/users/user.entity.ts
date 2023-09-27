@@ -16,7 +16,7 @@ export class User {
     @Column({ unique: true })
     correo: string
 
-    @Column()
+    @Column({ nullable: false })
     contrasena: string
 
     @Column()

@@ -6,7 +6,7 @@ import { RolesGuard } from '../guard/roles.guard';
 
 export function Auth(role: Role) {
     return applyDecorators(
-        Roles(Role.USER),
+        Roles(Role.USER), //aqui quiero poner el rol que se escoja en el registro
         UseGuards(AuthGuard, RolesGuard)
     )
 }
