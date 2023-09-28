@@ -27,7 +27,7 @@ export class Profesional {
     resenas: string;
 
     @Column()
-    nroTelefono: number;
+    nroTelefono: string;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date

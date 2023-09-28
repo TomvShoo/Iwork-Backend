@@ -13,5 +13,6 @@ import { Portafolio } from 'src/portafolio/entities/portafolio.entity';
   ],
   controllers: [ProfesionalController],
   providers: [ProfesionalService],
+  exports: [ProfesionalService]
 })
 export class ProfesionalModule {}

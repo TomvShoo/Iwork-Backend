@@ -3,15 +3,15 @@ import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
-import { PassThrough } from 'stream';
 import { JwtService } from '@nestjs/jwt';
-
+import { ProfesionalService } from 'src/profesional/profesional.service';
 @Injectable()
 export class AuthService {
 
     constructor(
         private readonly userService: UsersService,
         private readonly jwtService: JwtService,
+        private readonly profesionalService: ProfesionalService,
     ) {}
 
     async register({ nombre, apellido, correo, contrasena, nroTelefono, tipoCuenta }: RegisterDto) {
@@ -21,15 +21,29 @@ export class AuthService {
             throw new BadRequestException('Usuario ya existe');
         }
 
-        await this.userService.createUser({ 
-            nombre, 
-            apellido,
-            nroTelefono, 
-            correo, 
-            contrasena: await bcrypt.hash(contrasena, 10),
-            tipoCuenta,
-        });
-
+        let newUser;
+        if (tipoCuenta === 'cliente') {
+            newUser =  await this.userService.createUser({ 
+                nombre, 
+                apellido,
+                nroTelefono, 
+                correo, 
+                contrasena: await bcrypt.hash(contrasena, 10),
+                tipoCuenta,
+            });
+        } else if (tipoCuenta === 'profesional') {
+            newUser = await this.profesionalService.createProfesional({
+                nombre,
+                apellido,
+                nroTelefono,
+                correo,
+                contrasena: await bcrypt.hash(contrasena, 10),
+                tipoCuenta,
+            });
+        } else {
+            throw new BadRequestException('Tipo de cuenta no valido');
+        }
+        
         return {
             success: true,
             nombre,

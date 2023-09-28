@@ -2,8 +2,9 @@ export class CreateProfesionalDto {
     nombre: string
     apellido: string
     correo: string
-    constrasena: string
+    contrasena: string
     calificacion?: number
     resenas?: string
-    nroTelefono: number
+    nroTelefono: string
+    tipoCuenta: string
 }
