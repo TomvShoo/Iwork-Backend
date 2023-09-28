@@ -22,8 +22,8 @@ export class User {
     @Column()
     nroTelefono: string
 
-    @Column({ default: 'user' })
-    role: string;
+    @Column()
+    tipoCuenta: string;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date

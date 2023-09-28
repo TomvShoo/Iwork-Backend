@@ -4,4 +4,5 @@ export class CreateUserDto {
     correo: string
     contrasena: string
     nroTelefono: string
+    tipoCuenta: string
 }

@@ -14,7 +14,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) {}
 
-    async register({ nombre, apellido, correo, contrasena, nroTelefono }: RegisterDto) {
+    async register({ nombre, apellido, correo, contrasena, nroTelefono, tipoCuenta }: RegisterDto) {
         const user = await this.userService.findOneByEmail(correo); 
         
         if(user) {
@@ -27,6 +27,7 @@ export class AuthService {
             nroTelefono, 
             correo, 
             contrasena: await bcrypt.hash(contrasena, 10),
+            tipoCuenta,
         });
 
         return {
@@ -47,7 +48,7 @@ export class AuthService {
             throw new UnauthorizedException('Contrasena es incorrecta');
         }
 
-        const payload = { correo: user.correo, role: user.role };
+        const payload = { correo: user.correo, role: user.tipoCuenta };
         const token =  await this.jwtService.signAsync(payload);
 
         return {

@@ -32,8 +32,8 @@ export class Profesional {
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
-    @Column({ default: 'user' })
-    role: string;
+    @Column()
+    tipoCuenta: string;
 
     @OneToOne(() => Portafolio)
     @JoinColumn()

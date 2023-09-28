@@ -19,11 +19,11 @@ export class RegisterDto {
     @Length(8, 8, { message: 'El número de teléfono debe tener exactamente 8 caracteres' })
     nroTelefono: string;
 
-    // @IsNotEmpty()
-    // @IsEnum(Role)
-    // tipoCuenta: Role;
-    
     @IsString()
     @MinLength(8)
     contrasena: string;
+
+    @IsNotEmpty()
+    // @IsEnum(Role)
+    tipoCuenta: string;
 }
