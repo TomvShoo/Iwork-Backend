@@ -33,24 +33,32 @@ export class ProfesionalService {
     return this.profesionalRepository.find()
   }
 
-  async getProfesional(id: number) {
+  async getProfesional(profesionalId: number): Promise<Profesional | null> {
     const profesionalFound = await this.profesionalRepository.findOne({
       where: {
-        id
+        profesionalId
       }
-    })
-
-    if(!profesionalFound) {
-      return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND)
-    }
-
-    return profesionalFound;
+    });
+  
+    return profesionalFound || null; 
   }
 
-  async updateProfesional(id: number, profesional: UpdateProfesionalDto) {
+  async findOneByEmail(correo: string) {
+    try {
+        return await this.profesionalRepository.findOne({ where: {
+            correo: correo
+        } })
+        
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+  async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
     const profesionalFound = await this.profesionalRepository.findOne({
       where: {
-        id
+        profesionalId
       }
     })
 
@@ -62,8 +70,8 @@ export class ProfesionalService {
     return this.profesionalRepository.save(updateprofesional);
   }
 
-  async deleteProfesional(id: number) {
-    const result = await this.profesionalRepository.delete({ id });
+  async deleteProfesional(profesionalId: number) {
+    const result = await this.profesionalRepository.delete({ profesionalId });
 
     if(result.affected === 0) {
       return new HttpException('Usuario nop encontrado', HttpStatus.NOT_FOUND)

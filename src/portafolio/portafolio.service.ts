@@ -33,24 +33,47 @@ export class PortafolioService {
     return portafolioFound;
   }
 
-  async createPortafolio(id: number, Portafolio: CreatePortafolioDto) {
-  const profesionalFound = await this.profesionalRepository.findOne({
-     where: {
-       id
-    }
-   })
+  // async createPortafolio(id: number, Portafolio: CreatePortafolioDto) {
+  // const profesionalFound = await this.profesionalRepository.findOne({
+  //    where: {
+  //      id
+  //   }
+  //  })
 
-    if (!profesionalFound) {
-     return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
-    }
+  //   if (!profesionalFound) {
+  //    return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
+  //   }
     
-    const nuevoPortfolio = this.portafolioRepository.create(Portafolio)
+  //   const nuevoPortfolio = this.portafolioRepository.create(Portafolio)
 
-    const savePortfolio = await this.portafolioRepository.save(nuevoPortfolio);
+  //   const savePortfolio = await this.portafolioRepository.save(nuevoPortfolio);
 
-    profesionalFound.portafolio = savePortfolio
+  //   profesionalFound.portafolio = savePortfolio
 
-    return this.profesionalRepository.save(profesionalFound)
+  //   return this.profesionalRepository.save(profesionalFound)
+  // }
+
+  async createPortafolio(portafolio: CreatePortafolioDto) {
+    // Crea un nuevo objeto Portafolio y asigna los datos del DTO
+    // const portafolio = new Portafolio();
+    // portafolio.descripcion = data.descripcion;
+    // portafolio.certificaciones = data.certificaciones;
+    // portafolio.imagen = data.imagen;
+    // Guarda el objeto Portafolio en la base de datos
+  
+    try {
+      const newPortafolio = await this.portafolioRepository.create(portafolio);
+      const data = await this.portafolioRepository.save(newPortafolio);
+      return {
+        success:true,
+        data:data
+      }
+    } catch (error) {
+      return {
+        success:false,
+        data:error.message
+      }
+    }
+      
   }
-
 }

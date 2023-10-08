@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Profesional } from "src/profesional/entities/profesional.entity";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
 
 @Entity()
 export class Portafolio {
@@ -6,18 +7,20 @@ export class Portafolio {
     @PrimaryGeneratedColumn()
     id_portafolio: number
 
-    @Column()
-    imagen: string
+    @Column( "longtext",{ nullable: true })
+    imagen: string;
 
-    @Column()
+    @Column({ nullable: true })
     descripcion: string
 
-    @Column()
+    @Column({ nullable: true })
     certificaciones: string
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
+    @OneToOne(() => Profesional, (profesional) => profesional.portafolio)
+    @JoinColumn()
+    profesional: Profesional
     
-
 }

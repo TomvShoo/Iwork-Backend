@@ -8,4 +8,7 @@ export class LoginDto {
     @IsString()
     @MinLength(8)
     contrasena: string;
+
+    @IsString() // Agrega validación para el tipo de cuenta
+    tipoCuenta: string;
 }

@@ -1,4 +1,10 @@
+import { IsString } from 'class-validator'
+
 export class CreatePortafolioDto {
+    @IsString()
     descripcion: string
-    certificaciones?: string
+    @IsString()
+    certificaciones: string
+    @IsString()
+    imagen: string
 }

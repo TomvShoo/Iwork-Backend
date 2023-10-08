@@ -51,9 +51,18 @@ export class AuthService {
         }
     }
 
-    async login({ correo, contrasena }: LoginDto) {
-        const user = await this.userService.findOneByEmail(correo);
-        if(!user){
+    async login({ correo, contrasena, tipoCuenta }: LoginDto) {
+        let user;
+
+        if (tipoCuenta === 'cliente') {
+            user = await this.userService.findOneByEmail(correo);
+        } else if (tipoCuenta === 'profesional') {
+            user = await this.profesionalService.findOneByEmail(correo);
+        } else {
+            throw new BadRequestException('Tipo de cuenta no válido');
+        }
+
+        if (!user) {
             throw new UnauthorizedException('Correo es incorrecto o no existe');
         }
 
@@ -62,13 +71,32 @@ export class AuthService {
             throw new UnauthorizedException('Contrasena es incorrecta');
         }
 
+        if (user.tipoCuenta !== tipoCuenta) {
+            throw new UnauthorizedException('No tienes permisos para iniciar sesión con este tipo de cuenta');
+          }
+
+        // if (tipoCuenta === 'cliente') {
+
+        // } else if(tipoCuenta === 'profesional') {
+            
+        // }
+        
+        
         const payload = { correo: user.correo, role: user.tipoCuenta };
         const token =  await this.jwtService.signAsync(payload);
-
+        
         return {
             success: true,
             data: token
-        };
+        }
+        
+        // const payload = { correo: user.correo, role: user.tipoCuenta };
+        // const token =  await this.jwtService.signAsync(payload);
+
+        // return {
+        //     success: true,
+        //     data: token
+        // };
     }
 
     async profile({ correo, role }: {correo: string; role: string;}) {

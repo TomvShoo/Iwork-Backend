@@ -25,8 +25,16 @@ export class UsersService {
         return this.userRepository.save(newUser)
     }
 
-    findOneByEmail(correo: string) {
-        return this.userRepository.findOneBy({ correo })
+    async findOneByEmail(correo: string) {
+        try {
+            return await this.userRepository.findOne({ where: {
+                correo: correo
+            } })
+            
+        } catch (error) {
+            console.log(error.message);
+            
+        }
     }
 
     findByEmailwithPassword(correo: string) {

@@ -6,7 +6,7 @@ import { Profesion } from "src/profesion/entities/profesion.entity";
 @Entity('profesional')
 export class Profesional {
     @PrimaryGeneratedColumn()
-    id: number;
+    profesionalId: number;
 
     @Column()
     nombre: string;
@@ -35,7 +35,7 @@ export class Profesional {
     @Column()
     tipoCuenta: string;
 
-    @OneToOne(() => Portafolio)
+    @OneToOne(() => Portafolio, (portafolio) => portafolio.profesional)
     @JoinColumn()
     portafolio: Portafolio;
 
