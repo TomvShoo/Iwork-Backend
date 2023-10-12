@@ -3,21 +3,21 @@ import { CreatePortafolioDto } from './dto/create-portafolio.dto';
 import { UpdatePortafolioDto } from './dto/update-portafolio.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Portafolio } from './entities/portafolio.entity';
-import { Profesional } from 'src/profesional/entities/profesional.entity';
+import { Profesional } from '../profesional/entities/profesional.entity';
 import { Repository } from 'typeorm';
-import { CreateProfesionalDto } from 'src/profesional/dto/create-profesional.dto';
+import { CreateProfesionalDto } from '../profesional/dto/create-profesional.dto';
+import { UserActiveInterface } from '../common/interfaces/user-active.interface';
+import * as sharp from 'sharp';
+import * as fs from 'fs';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class PortafolioService {
   constructor(
     @InjectRepository(Portafolio) private portafolioRepository: Repository<Portafolio>,
-    @InjectRepository(Profesional) private profesionalRepository: Repository<Profesional> ) {}
-  
-  
-  // createPortafolio(portafolio: CreatePortafolioDto) {
-  //   const NewPortafolio = this.portafolioRepository.create(portafolio)
-  //   return this.portafolioRepository.save(NewPortafolio)
-  // }
+    @InjectRepository(Profesional) private profesionalRepository: Repository<Profesional>,
+                                  private readonly jwtService: JwtService, ) {}
+
 
   async getPortafolio(id_portafolio: number) {
     const portafolioFound = await this.portafolioRepository.findOne({
@@ -53,16 +53,23 @@ export class PortafolioService {
   //   return this.profesionalRepository.save(profesionalFound)
   // }
 
-  async createPortafolio(portafolio: CreatePortafolioDto) {
-    // Crea un nuevo objeto Portafolio y asigna los datos del DTO
-    // const portafolio = new Portafolio();
-    // portafolio.descripcion = data.descripcion;
-    // portafolio.certificaciones = data.certificaciones;
-    // portafolio.imagen = data.imagen;
-    // Guarda el objeto Portafolio en la base de datos
-  
+  async createPortafolio(portafolio: CreatePortafolioDto, profesionalId: number) {
+
+    const imagen = portafolio.imagen;
+    const nombreArchivo = `${Date.now()}_portafolio.jpg`;
+
+    //decodificar la imagen
     try {
-      const newPortafolio = await this.portafolioRepository.create(portafolio);
+      const dataBuffer = Buffer.from(imagen, 'base64');
+      const processedImageBuffer = await sharp(dataBuffer).toBuffer();
+      fs.writeFileSync(nombreArchivo, processedImageBuffer);
+
+      const newPortafolio = new Portafolio();
+      newPortafolio.descripcion = portafolio.descripcion;
+      newPortafolio.certificaciones = portafolio.certificaciones;
+      newPortafolio.imagen = nombreArchivo;
+      newPortafolio.profesionalId = profesionalId;
+;
       const data = await this.portafolioRepository.save(newPortafolio);
       return {
         success:true,
@@ -72,8 +79,7 @@ export class PortafolioService {
       return {
         success:false,
         data:error.message
-      }
+      }      
     }
-      
   }
 }

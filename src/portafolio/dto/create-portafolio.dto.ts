@@ -1,10 +1,12 @@
-import { IsString } from 'class-validator'
+import { IsBase64, IsNumber, IsString } from 'class-validator'
 
 export class CreatePortafolioDto {
     @IsString()
-    descripcion: string
+    descripcion: string;
+    
     @IsString()
-    certificaciones: string
-    @IsString()
-    imagen: string
+    certificaciones: string;
+    
+    @IsBase64()
+    imagen: string;
 }

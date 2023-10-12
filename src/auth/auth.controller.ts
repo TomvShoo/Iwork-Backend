@@ -6,8 +6,10 @@ import { AuthGuard } from './guard/auth.guard';
 import { Request } from 'express';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guard/roles.guard';
-import { Role } from './enums/rol.enum';
+import { Role } from '../common/enums/rol.enum';
 import { Auth } from './decorators/auth.decorator';
+import { ActiveUser } from 'src/common/decorators/active-user.decoratorts';
+import { UserActiveInterface } from 'src/common/interfaces/user-active.interface';
 
 interface RequestWithUser extends Request {
     user: {
@@ -20,8 +22,7 @@ interface RequestWithUser extends Request {
 @Controller('auth')
 export class AuthController {
 
-    constructor( private readonly authService: AuthService,
-        ) {}
+    constructor( private readonly authService: AuthService,) {}
 
     @Post('register')
     register(
@@ -29,7 +30,7 @@ export class AuthController {
         registerDto: RegisterDto, ) {
         return this.authService.register(registerDto);
     }
-    
+
     @Post('login')
     login(@Body() loginDto: LoginDto, ) {
         return this.authService.login(loginDto);
@@ -42,11 +43,18 @@ export class AuthController {
     //     return this.authService.profile(req.user)
     // }
 
-    @Get('perfil')
+    @Get('perfilcli')
     @Auth(Role.CLIENTE)
     @UseGuards(AuthGuard, RolesGuard)
-    profile(@Req() req: RequestWithUser) {
-        return this.authService.profile(req.user)
-    }
+    profile(@ActiveUser() user: UserActiveInterface) {
+        return this.authService.profileCli(user)
+    };
+
+    // @Get('perfilPro')
+    // @Auth(Role.PROFESIONAL)
+    // @UseGuards(AuthGuard, RolesGuard)
+    // profile(@Req() req: RequestWithUser) {
+    //     return this.authService.profilePro(req.user)
+    // }
 
 }

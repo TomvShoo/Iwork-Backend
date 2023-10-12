@@ -6,6 +6,7 @@ import { Portafolio } from 'src/portafolio/entities/portafolio.entity';
 import { Repository } from 'typeorm';
 import { Profesional } from './entities/profesional.entity';
 
+
 @Injectable()
 export class ProfesionalService {
 
@@ -53,6 +54,13 @@ export class ProfesionalService {
         console.log(error.message);
         
     }
+  }
+
+  findByEmailwithPassword(correo: string) {
+    return this.profesionalRepository.findOne({
+        where: { correo },
+        select: ['profesionalId', 'nombre','apellido','correo','contrasena',]
+    })
 }
 
   async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
@@ -79,5 +87,7 @@ export class ProfesionalService {
 
     return result    
   }
+
+  
 
 }

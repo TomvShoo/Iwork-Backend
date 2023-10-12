@@ -3,8 +3,10 @@ import { ProfesionalService } from './profesional.service';
 import { CreateProfesionalDto } from './dto/create-profesional.dto';
 import { UpdateProfesionalDto } from './dto/update-profesional.dto';
 import { Profesional } from './entities/profesional.entity';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from 'src/common/enums/rol.enum';
 
-
+@Auth(Role.PROFESIONAL)
 @Controller('profesional')
 export class ProfesionalController {
   constructor(private profesionalService: ProfesionalService) {}

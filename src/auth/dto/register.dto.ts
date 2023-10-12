@@ -1,6 +1,6 @@
 import { Transform } from "class-transformer";
 import { IsString, IsEmail, MinLength, IsNumber, MaxLength, Length, IsNotEmpty, IsEnum } from "class-validator";
-import { Role } from "../enums/rol.enum";
+import { Role } from "../../common/enums/rol.enum";
 
 export class RegisterDto {
 

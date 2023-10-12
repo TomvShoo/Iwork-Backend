@@ -14,6 +14,10 @@ export class AuthService {
         private readonly profesionalService: ProfesionalService,
     ) {}
 
+    createToken(payload: any): string {
+        return this.jwtService.sign(payload);
+    }
+
     async register({ nombre, apellido, correo, contrasena, nroTelefono, tipoCuenta }: RegisterDto) {
         const user = await this.userService.findOneByEmail(correo); 
         
@@ -51,13 +55,20 @@ export class AuthService {
         }
     }
 
-    async login({ correo, contrasena, tipoCuenta }: LoginDto) {
+    async login({ correo, contrasena, tipoCuenta}: LoginDto) {
         let user;
+        let userId;
 
         if (tipoCuenta === 'cliente') {
             user = await this.userService.findOneByEmail(correo);
+            if (user) {
+                userId = user.id;
+            }
         } else if (tipoCuenta === 'profesional') {
             user = await this.profesionalService.findOneByEmail(correo);
+            if (user) {
+                userId = user.profesionalId;
+            }
         } else {
             throw new BadRequestException('Tipo de cuenta no válido');
         }
@@ -73,34 +84,38 @@ export class AuthService {
 
         if (user.tipoCuenta !== tipoCuenta) {
             throw new UnauthorizedException('No tienes permisos para iniciar sesión con este tipo de cuenta');
-          }
-
-        // if (tipoCuenta === 'cliente') {
-
-        // } else if(tipoCuenta === 'profesional') {
-            
-        // }
+          }        
         
-        
-        const payload = { correo: user.correo, role: user.tipoCuenta };
+        const payload = {
+            id: userId, 
+            correo: user.correo, 
+            role: user.tipoCuenta,
+            };
         const token =  await this.jwtService.signAsync(payload);
         
         return {
             success: true,
-            data: token
+            data: token,
         }
-        
-        // const payload = { correo: user.correo, role: user.tipoCuenta };
-        // const token =  await this.jwtService.signAsync(payload);
-
-        // return {
-        //     success: true,
-        //     data: token
-        // };
     }
 
-    async profile({ correo, role }: {correo: string; role: string;}) {
-        
-        return await this.userService.findOneByEmail(correo);
-    } 
+    async profileCli({ correo, role }: {correo: string; role: string;}) {
+        if (role === 'cliente') {
+            return await this.userService.findOneByEmail(correo);
+        } else if (role === 'profesional') {
+            return await this.profesionalService.findOneByEmail(correo)
+        } else {
+            throw new UnauthorizedException('Tipo de usuario no valido');
+        }
+    }
+    
+    async profilePro({ correo, role }: {correo: string; role: string;}) {
+        if (role === 'cliente') {
+            return await this.userService.findOneByEmail(correo);
+        } else if (role === 'profesional') {
+            return await this.profesionalService.findOneByEmail(correo)
+        } else {
+            throw new UnauthorizedException('Tipo de usuario no valido');
+        }
+    }
 }

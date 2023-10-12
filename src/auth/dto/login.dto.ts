@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNumber, IsString, MinLength } from "class-validator";
 
 
 export class LoginDto {
@@ -11,4 +11,5 @@ export class LoginDto {
 
     @IsString() // Agrega validación para el tipo de cuenta
     tipoCuenta: string;
+    
 }

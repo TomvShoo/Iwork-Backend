@@ -28,7 +28,7 @@ export class UsersService {
     async findOneByEmail(correo: string) {
         try {
             return await this.userRepository.findOne({ where: {
-                correo: correo
+                correo: correo,
             } })
             
         } catch (error) {

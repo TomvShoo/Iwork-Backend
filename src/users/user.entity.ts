@@ -1,4 +1,5 @@
 import { CartaTrabajo } from "src/carta-trabajo/entities/carta-trabajo.entity";
+import { Role } from "../common/enums/rol.enum";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 @Entity({ name: 'cliente' })
@@ -22,7 +23,7 @@ export class User {
     @Column()
     nroTelefono: string
 
-    @Column()
+    @Column({ default: Role.CLIENTE})
     tipoCuenta: string;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
