@@ -15,4 +15,7 @@ export class Profesion {
 
     @ManyToOne(() => Profesional, profesional => profesional.tipoProfesion)
     dueno: Profesional
+
+    @ManyToMany(() => Profesional, profesional => profesional.tipoProfesion)
+    profesionId: Profesional[];
 }

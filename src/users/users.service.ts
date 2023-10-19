@@ -4,11 +4,13 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Profesional } from 'src/profesional/entities/profesional.entity';
 
 @Injectable()
 export class UsersService {
 
-    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
+    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
+                @InjectRepository(Profesional) private readonly profesionalRepository: Repository<Profesional>) {}
  
     async createUser(user: CreateUserDto) {
         const userfound = await this.userRepository.findOne({
@@ -86,4 +88,32 @@ export class UsersService {
         const updateUser = Object.assign(userFound, user);
         return this.userRepository.save(updateUser);
     }
+
+    // async searchProfessionals(query: string) {
+    // return this.profesionalRepository.createQueryBuilder("profesional")
+    //     .where("profesional.nombre LIKE :query", { query: `%${query}%` })
+    //     .orWhere("profesional.profesion LIKE :query", { query: `%${query}%` })
+    //     .getMany();
+    // }
+
+
+    async searchProfessionals(query: string) {
+    return this.profesionalRepository
+        .createQueryBuilder('profesional')
+        .where(
+        'profesional.nombre LIKE :query OR profesional.apellido LIKE :query OR profesional.profesion LIKE :query',
+        { query: `%${query}%` },
+        )
+        .getMany();
+    }
+
+    // async all(): Promise<Profesional[]> {
+    //     return this.profesionalRepository.find();
+    // }
+
+    // async queryBuilder(alias: string) {
+    //     return this.profesionalRepository.createQueryBuilder(alias);
+    // }
+
+
 }

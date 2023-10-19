@@ -43,8 +43,8 @@ export class AuthController {
     //     return this.authService.profile(req.user)
     // }
 
-    @Get('perfilcli')
-    @Auth(Role.CLIENTE)
+    @Get('perfil')
+    // @Auth(Role.CLIENTE)
     @UseGuards(AuthGuard, RolesGuard)
     profile(@ActiveUser() user: UserActiveInterface) {
         return this.authService.profileCli(user)

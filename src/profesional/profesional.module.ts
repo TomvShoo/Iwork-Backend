@@ -4,15 +4,20 @@ import { ProfesionalController } from './profesional.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profesional } from './entities/profesional.entity';
 import { Portafolio } from 'src/portafolio/entities/portafolio.entity';
+import { ProfesionService } from 'src/profesion/profesion.service';
+import { Profesion } from 'src/profesion/entities/profesion.entity';
+import { UsersService } from 'src/users/users.service';
+import { ProfesionModule } from 'src/profesion/profesion.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Profesional
+      Profesional,
+      Profesion
     ])
   ],
   controllers: [ProfesionalController],
-  providers: [ProfesionalService],
+  providers: [ProfesionalService, ProfesionService],
   exports: [ProfesionalService]
 })
 export class ProfesionalModule {}

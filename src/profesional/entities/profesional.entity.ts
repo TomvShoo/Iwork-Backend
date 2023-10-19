@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, JoinTable, ManyToMany } from "typeorm";
 import { Portafolio } from "src/portafolio/entities/portafolio.entity";
 import { CartaTrabajo } from "src/carta-trabajo/entities/carta-trabajo.entity";
 import { Profesion } from "src/profesion/entities/profesion.entity";
+import { Reseña } from "src/reseña/entities/reseña.entity";
 
 @Entity('profesional')
 export class Profesional {
@@ -19,12 +20,6 @@ export class Profesional {
 
     @Column({ nullable: false })
     contrasena: string;
-    
-    @Column({ nullable: true })
-    calificacion: number;
-
-    @Column( {nullable: true })
-    resenas: string;
 
     @Column()
     nroTelefono: string;
@@ -39,9 +34,10 @@ export class Profesional {
     @JoinColumn()
     portafolio: Portafolio;
 
-    @OneToMany(() => CartaTrabajo, carta => carta.author)
-    cartas: CartaTrabajo[]
+    @ManyToMany(() => Profesion, profesion => profesion.profesionId)
+    @JoinTable()
+    tipoProfesion: Profesion[];
 
-    @OneToMany(() => Profesion, profesion => profesion.dueno)
-    tipoProfesion: Profesion[]
+    @OneToMany(() => Reseña, resena => resena.dueno)
+    resena: Reseña[]
 }

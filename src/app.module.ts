@@ -8,6 +8,7 @@ import { CartaTrabajoModule } from './carta-trabajo/carta-trabajo.module';
 import { ProfesionModule } from './profesion/profesion.module';
 import { PortafolioModule } from './portafolio/portafolio.module';
 import { AuthModule } from './auth/auth.module';
+import { ReseñaModule } from './reseña/reseña.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { AuthModule } from './auth/auth.module';
     CartaTrabajoModule,
     ProfesionModule,
     PortafolioModule,
-    AuthModule],
+    AuthModule,
+    ReseñaModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -47,7 +47,6 @@ export class PortafolioController {
           data: 'error en el token'
         };
       }
-     
 
       const profesionalId = decodedToken.id
 
@@ -62,11 +61,24 @@ export class PortafolioController {
     } catch (error) {
       console.log(error.message)
       throw new Error('No se pudo guardar la imagen')
-      
     }
-
   }
 
+  @Get('profesional/:id')
+  async getPortafoliosByProfesionalId(@Param('id') profesionalId: number) {
+    try {
+      const portafolios = await this.portafolioService.getPortafoliosByProfesionalId(profesionalId);
+      return {
+        success: true,
+        data: portafolios,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
   // @Post(':profesionalId/upload')
   //  uploadPortfolio(
   //   @Param('profesionalId') profesionalId: number,

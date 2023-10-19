@@ -11,6 +11,6 @@ import { UsersModule } from 'src/users/users.module';
     TypeOrmModule.forFeature([Profesion, Profesional]), UsersModule
   ],
   controllers: [ProfesionController],
-  providers: [ProfesionService],
+  providers: [ProfesionService,],
 })
 export class ProfesionModule {}

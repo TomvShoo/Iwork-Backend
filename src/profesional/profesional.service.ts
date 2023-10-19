@@ -12,8 +12,8 @@ export class ProfesionalService {
 
   constructor(
     @InjectRepository(Profesional) private profesionalRepository: Repository<Profesional>
-    
-    ) {}
+
+  ) { }
 
   async createProfesional(profesional: CreateProfesionalDto) {
     const profesionalFound = await this.profesionalRepository.findOne({
@@ -40,28 +40,30 @@ export class ProfesionalService {
         profesionalId
       }
     });
-  
-    return profesionalFound || null; 
+
+    return profesionalFound || null;
   }
 
   async findOneByEmail(correo: string) {
     try {
-        return await this.profesionalRepository.findOne({ where: {
-            correo: correo
-        } })
-        
+      return await this.profesionalRepository.findOne({
+        where: {
+          correo: correo
+        }
+      })
+
     } catch (error) {
-        console.log(error.message);
-        
+      console.log(error.message);
+
     }
   }
 
   findByEmailwithPassword(correo: string) {
     return this.profesionalRepository.findOne({
-        where: { correo },
-        select: ['profesionalId', 'nombre','apellido','correo','contrasena',]
+      where: { correo },
+      select: ['profesionalId', 'nombre', 'apellido', 'correo', 'contrasena',]
     })
-}
+  }
 
   async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
     const profesionalFound = await this.profesionalRepository.findOne({
@@ -70,8 +72,8 @@ export class ProfesionalService {
       }
     })
 
-    if(!profesionalFound) {
-      return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND); 
+    if (!profesionalFound) {
+      return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
     }
 
     const updateprofesional = Object.assign(profesionalFound, profesional);
@@ -81,13 +83,39 @@ export class ProfesionalService {
   async deleteProfesional(profesionalId: number) {
     const result = await this.profesionalRepository.delete({ profesionalId });
 
-    if(result.affected === 0) {
+    if (result.affected === 0) {
       return new HttpException('Usuario nop encontrado', HttpStatus.NOT_FOUND)
     }
 
-    return result    
+    return result
   }
 
-  
+  // async searchProfesionales(query: string) {
+  //   return this.profesionalRepository
+  //     .createQueryBuilder('profesional')
+  //     .where(
+  //       'profesional.nombre LIKE :query OR profesional.apellido LIKE :query',
+  //       { query: `%${query}%` },
+  //     )
+  //     .getMany();
+  // }
+  async searchProfesionales(query: string) {
+    return this.profesionalRepository
+      .createQueryBuilder('profesional')
+      .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Cargar la relación tipoProfesion
+      .where(
+        'profesional.nombre LIKE :query OR profesional.apellido LIKE :query OR profesion.nombre_profesion LIKE :query',
+        { query: `%${query}%` },
+      )
+      .getMany();
+  }
+
+  async update(profesional: Profesional): Promise<Profesional> {
+    return this.profesionalRepository.save(profesional);
+  }
+
+  async findById(profesionalId: number): Promise<Profesional> {
+    return this.profesionalRepository.findOne({ where: { profesionalId } });
+  }
 
 }

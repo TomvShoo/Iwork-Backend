@@ -33,6 +33,46 @@ export class PortafolioService {
     return portafolioFound;
   }
 
+  async getPortafoliosByProfesionalId(profesionalId: number) {
+    const portafolios = await this.portafolioRepository.find({
+      where: {
+        profesionalId,
+      },
+    });
+
+    if (!portafolios || portafolios.length === 0) {
+      throw new HttpException('No se encontró ningún portafolio para este profesional', HttpStatus.NOT_FOUND);
+    }
+
+    return portafolios;
+  }
+
+
+  async createPortafolio(portafolio: CreatePortafolioDto, profesionalId: number) {
+
+    const imagen = portafolio.imagen;
+
+    try {
+      const newPortafolio = new Portafolio();
+      newPortafolio.descripcion = portafolio.descripcion;
+      newPortafolio.certificaciones = portafolio.certificaciones;
+      newPortafolio.imagen = imagen;
+      newPortafolio.profesionalId = profesionalId
+      
+      const data = await this.portafolioRepository.save(newPortafolio);
+      return {
+        success:true,
+        data:data
+      }
+    } catch (error) {
+      return {
+        success:false,
+        data:error.message
+      }      
+    }
+  }
+}
+
   // async createPortafolio(id: number, Portafolio: CreatePortafolioDto) {
   // const profesionalFound = await this.profesionalRepository.findOne({
   //    where: {
@@ -53,33 +93,7 @@ export class PortafolioService {
   //   return this.profesionalRepository.save(profesionalFound)
   // }
 
-  async createPortafolio(portafolio: CreatePortafolioDto, profesionalId: number) {
 
-    const imagen = portafolio.imagen;
-    const nombreArchivo = `${Date.now()}_portafolio.jpg`;
-
-    //decodificar la imagen
-    try {
-      const dataBuffer = Buffer.from(imagen, 'base64');
-      const processedImageBuffer = await sharp(dataBuffer).toBuffer();
-      fs.writeFileSync(nombreArchivo, processedImageBuffer);
-
-      const newPortafolio = new Portafolio();
-      newPortafolio.descripcion = portafolio.descripcion;
-      newPortafolio.certificaciones = portafolio.certificaciones;
-      newPortafolio.imagen = nombreArchivo;
-      newPortafolio.profesionalId = profesionalId;
-;
-      const data = await this.portafolioRepository.save(newPortafolio);
-      return {
-        success:true,
-        data:data
-      }
-    } catch (error) {
-      return {
-        success:false,
-        data:error.message
-      }      
-    }
-  }
-}
+  // const dataBuffer = Buffer.from(imagen, 'base64');
+      // const processedImageBuffer = await sharp(dataBuffer).toBuffer();
+      // fs.writeFileSync(nombreArchivo, processedImageBuffer);

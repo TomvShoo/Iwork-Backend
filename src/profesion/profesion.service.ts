@@ -9,8 +9,7 @@ import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class ProfesionService {
   
-  constructor(@InjectRepository(Profesion) private profesionRepository: Repository<Profesion>,
-  private userService: UsersService) {}
+  constructor(@InjectRepository(Profesion) private profesionRepository: Repository<Profesion>,) {}
   
   async createProfesion(profesion: CreateProfesionDto) {
     const newProfesion = this.profesionRepository.create(profesion);
@@ -21,6 +20,10 @@ export class ProfesionService {
     return this.profesionRepository.find({
       relations: ['dueno']
     })
+  }
+
+  async findById(id_profesion: number): Promise<Profesion> {
+    return this.profesionRepository.findOne({ where: { id_profesion } });
   }
 
   // findOne(id: number) {
