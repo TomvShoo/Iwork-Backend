@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ProfesionalService } from 'src/profesional/profesional.service';
+import { ProfesionModule } from 'src/profesion/profesion.module';
 @Injectable()
 export class AuthService {
 
@@ -12,26 +13,26 @@ export class AuthService {
         private readonly userService: UsersService,
         private readonly jwtService: JwtService,
         private readonly profesionalService: ProfesionalService,
-    ) {}
+    ) { }
 
     createToken(payload: any): string {
         return this.jwtService.sign(payload);
     }
 
     async register({ nombre, apellido, correo, contrasena, nroTelefono, tipoCuenta }: RegisterDto) {
-        const user = await this.userService.findOneByEmail(correo); 
-        
-        if(user) {
+        const user = await this.userService.findOneByEmail(correo);
+
+        if (user) {
             throw new BadRequestException('Usuario ya existe');
         }
 
         let newUser;
         if (tipoCuenta === 'cliente') {
-            newUser =  await this.userService.createUser({ 
-                nombre, 
+            newUser = await this.userService.createUser({
+                nombre,
                 apellido,
-                nroTelefono, 
-                correo, 
+                nroTelefono,
+                correo,
                 contrasena: await bcrypt.hash(contrasena, 10),
                 tipoCuenta,
             });
@@ -47,7 +48,7 @@ export class AuthService {
         } else {
             throw new BadRequestException('Tipo de cuenta no valido');
         }
-        
+
         return {
             success: true,
             nombre,
@@ -55,7 +56,7 @@ export class AuthService {
         }
     }
 
-    async login({ correo, contrasena, tipoCuenta}: LoginDto) {
+    async login({ correo, contrasena, tipoCuenta }: LoginDto) {
         let user;
         let userId;
 
@@ -78,28 +79,28 @@ export class AuthService {
         }
 
         const isPasswordValid = await bcrypt.compare(contrasena, user.contrasena);
-        if(!isPasswordValid){
+        if (!isPasswordValid) {
             throw new UnauthorizedException('Contrasena es incorrecta');
         }
 
         if (user.tipoCuenta !== tipoCuenta) {
             throw new UnauthorizedException('No tienes permisos para iniciar sesión con este tipo de cuenta');
-          }        
-        
+        }
+
         const payload = {
-            id: userId, 
-            correo: user.correo, 
+            id: userId,
+            correo: user.correo,
             role: user.tipoCuenta,
-            };
-        const token =  await this.jwtService.signAsync(payload);
-        
+        };
+        const token = await this.jwtService.signAsync(payload);
+
         return {
             success: true,
             data: token,
         }
     }
 
-    async profileCli({ correo, role }: {correo: string; role: string;}) {
+    async profileCli({ correo, role }: { correo: string; role: string; }) {
         if (role === 'cliente') {
             return await this.userService.findOneByEmail(correo);
         } else if (role === 'profesional') {
@@ -108,8 +109,8 @@ export class AuthService {
             throw new UnauthorizedException('Tipo de usuario no valido');
         }
     }
-    
-    async profilePro({ correo, role }: {correo: string; role: string;}) {
+
+    async profilePro({ correo, role }: { correo: string; role: string; }) {
         if (role === 'cliente') {
             return await this.userService.findOneByEmail(correo);
         } else if (role === 'profesional') {

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, JoinTable, ManyToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 import { Portafolio } from "src/portafolio/entities/portafolio.entity";
 import { CartaTrabajo } from "src/carta-trabajo/entities/carta-trabajo.entity";
 import { Profesion } from "src/profesion/entities/profesion.entity";

@@ -50,6 +50,8 @@ export class AuthController {
         return this.authService.profileCli(user)
     };
 
+    
+
     // @Get('perfilPro')
     // @Auth(Role.PROFESIONAL)
     // @UseGuards(AuthGuard, RolesGuard)

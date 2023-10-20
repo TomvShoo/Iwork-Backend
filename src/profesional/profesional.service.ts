@@ -44,20 +44,40 @@ export class ProfesionalService {
     return profesionalFound || null;
   }
 
+  // async findOneByEmail(correo: string) {
+  //   try {
+  //     return await this.profesionalRepository.findOne({
+  //       where: {
+  //         correo: correo
+  //       }
+  //     })
+
+  //   } catch (error) {
+  //     console.log(error.message);
+
+  //   }
+  // }
+
   async findOneByEmail(correo: string) {
     try {
-      return await this.profesionalRepository.findOne({
-        where: {
-          correo: correo
-        }
-      })
-
+      return await this.profesionalRepository
+        .createQueryBuilder('profesional')
+        .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Carga la relación con la profesión
+        .where('profesional.correo = :correo', { correo })
+        .getOne();
     } catch (error) {
       console.log(error.message);
-
     }
   }
 
+  async findProfesionalWithProfesion(profesionalId: number): Promise<Profesional> {
+    return this.profesionalRepository
+      .createQueryBuilder('profesional')
+      .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Carga la relación con la profesión
+      .where('profesional.profesionalId = :id', { id: profesionalId })
+      .getOne();
+  }
+  
   findByEmailwithPassword(correo: string) {
     return this.profesionalRepository.findOne({
       where: { correo },
@@ -90,19 +110,11 @@ export class ProfesionalService {
     return result
   }
 
-  // async searchProfesionales(query: string) {
-  //   return this.profesionalRepository
-  //     .createQueryBuilder('profesional')
-  //     .where(
-  //       'profesional.nombre LIKE :query OR profesional.apellido LIKE :query',
-  //       { query: `%${query}%` },
-  //     )
-  //     .getMany();
-  // }
+
   async searchProfesionales(query: string) {
     return this.profesionalRepository
       .createQueryBuilder('profesional')
-      .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Cargar la relación tipoProfesion
+      .leftJoinAndSelect('profesional.tipoProfesion', 'profesion')
       .where(
         'profesional.nombre LIKE :query OR profesional.apellido LIKE :query OR profesion.nombre_profesion LIKE :query',
         { query: `%${query}%` },
