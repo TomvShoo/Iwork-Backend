@@ -34,9 +34,16 @@ export class Profesional {
     @JoinColumn()
     portafolio: Portafolio;
 
-    @ManyToMany(() => Profesion, profesion => profesion.profesionId)
+    @ManyToMany(() => Profesion, profesion => profesion.profesionales, { cascade: true })
     @JoinTable()
     tipoProfesion: Profesion[];
+
+    addProfesion(profesion: Profesion) {
+        if (!this.tipoProfesion) {
+            this.tipoProfesion = []; // Asegúrate de inicializar tipoProfesion si es null o undefined
+        }
+        this.tipoProfesion.push(profesion);
+    }
 
     @OneToMany(() => Reseña, resena => resena.dueno)
     resena: Reseña[]

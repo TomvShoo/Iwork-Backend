@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Portafolio } from 'src/portafolio/entities/portafolio.entity';
 import { Repository } from 'typeorm';
 import { Profesional } from './entities/profesional.entity';
+import { Profesion } from 'src/profesion/entities/profesion.entity';
 
 
 @Injectable()
@@ -77,7 +78,7 @@ export class ProfesionalService {
       .where('profesional.profesionalId = :id', { id: profesionalId })
       .getOne();
   }
-  
+
   findByEmailwithPassword(correo: string) {
     return this.profesionalRepository.findOne({
       where: { correo },
@@ -85,20 +86,20 @@ export class ProfesionalService {
     })
   }
 
-  async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
-    const profesionalFound = await this.profesionalRepository.findOne({
-      where: {
-        profesionalId
-      }
-    })
+  // async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
+  //   const profesionalFound = await this.profesionalRepository.findOne({
+  //     where: {
+  //       profesionalId
+  //     }
+  //   })
 
-    if (!profesionalFound) {
-      return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
-    }
+  //   if (!profesionalFound) {
+  //     return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
+  //   }
 
-    const updateprofesional = Object.assign(profesionalFound, profesional);
-    return this.profesionalRepository.save(updateprofesional);
-  }
+  //   const updateprofesional = Object.assign(profesionalFound, profesional);
+  //   return this.profesionalRepository.save(updateprofesional);
+  // }
 
   async deleteProfesional(profesionalId: number) {
     const result = await this.profesionalRepository.delete({ profesionalId });
@@ -122,9 +123,46 @@ export class ProfesionalService {
       .getMany();
   }
 
+  async findProfesionesByProfesionalId(profesionalId: number): Promise<Profesion[]> {
+    const profesional = await this.profesionalRepository.findOne({
+      where: { profesionalId },
+      relations: ["tipoProfesion"]
+    });
+    if (profesional) {
+      return profesional.tipoProfesion;
+    } else {
+      return [];
+    }
+  }
+
+
+
   async update(profesional: Profesional): Promise<Profesional> {
     return this.profesionalRepository.save(profesional);
   }
+
+
+  async updateProfesional(profesionalId: number, profesiones: Profesion[]): Promise<Profesional | undefined> {
+    try {
+      const profesional = await this.profesionalRepository.findOne({ where: { profesionalId }, relations: ["tipoProfesion"] });
+      if (!profesional) {
+        throw new Error('Profesional no encontrado');
+      }
+      if (profesional.tipoProfesion) {
+        profesional.tipoProfesion = [...profesional.tipoProfesion, ...profesiones];
+      } else {
+        profesional.tipoProfesion = profesiones;
+      }
+      return this.profesionalRepository.save(profesional);
+    } catch (error) {
+      console.log(error.message);
+      throw new Error('No se pudo actualizar el profesional');
+    }
+  }
+
+
+
+
 
   async findById(profesionalId: number): Promise<Profesional> {
     return this.profesionalRepository.findOne({ where: { profesionalId } });

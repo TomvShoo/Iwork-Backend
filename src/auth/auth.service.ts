@@ -53,6 +53,7 @@ export class AuthService {
             success: true,
             nombre,
             correo,
+            profesionalId: newUser.profesionalId,
         }
     }
 

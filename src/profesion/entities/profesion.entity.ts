@@ -1,5 +1,5 @@
 import { Profesional } from "src/profesional/entities/profesional.entity";
-import { Column, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Entity, OneToMany } from "typeorm";
+import { Column, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Entity, OneToMany, JoinTable } from "typeorm";
 
 @Entity('profesion')
 export class Profesion {
@@ -16,6 +16,10 @@ export class Profesion {
     @ManyToOne(() => Profesional, profesional => profesional.tipoProfesion)
     dueno: Profesional
 
+    // @ManyToMany(() => Profesional, profesional => profesional.tipoProfesion)
+    // profesionId: Profesional[];
+    
     @ManyToMany(() => Profesional, profesional => profesional.tipoProfesion)
-    profesionId: Profesional[];
+    @JoinTable()
+    profesionales: Profesional[];
 }
