@@ -35,30 +35,6 @@ export class ProfesionalService {
     return this.profesionalRepository.find()
   }
 
-  async getProfesional(profesionalId: number): Promise<Profesional | null> {
-    const profesionalFound = await this.profesionalRepository.findOne({
-      where: {
-        profesionalId
-      }
-    });
-
-    return profesionalFound || null;
-  }
-
-  // async findOneByEmail(correo: string) {
-  //   try {
-  //     return await this.profesionalRepository.findOne({
-  //       where: {
-  //         correo: correo
-  //       }
-  //     })
-
-  //   } catch (error) {
-  //     console.log(error.message);
-
-  //   }
-  // }
-
   async findOneByEmail(correo: string) {
     try {
       return await this.profesionalRepository
@@ -71,49 +47,18 @@ export class ProfesionalService {
     }
   }
 
-  async findProfesionalWithProfesion(profesionalId: number): Promise<Profesional> {
-    return this.profesionalRepository
-      .createQueryBuilder('profesional')
-      .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Carga la relación con la profesión
-      .where('profesional.profesionalId = :id', { id: profesionalId })
-      .getOne();
+  async getProfesional(profesionalId: number) {
+    
+      return await this.profesionalRepository
+        .createQueryBuilder('profesional')
+        .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Asegúrate de reemplazar 'profesiones' con el nombre real de tu relación
+        .where('profesional.profesionalId = :profesionalId', { profesionalId })
+        .getOne();
+    
   }
-
-  findByEmailwithPassword(correo: string) {
-    return this.profesionalRepository.findOne({
-      where: { correo },
-      select: ['profesionalId', 'nombre', 'apellido', 'correo', 'contrasena',]
-    })
-  }
-
-  // async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
-  //   const profesionalFound = await this.profesionalRepository.findOne({
-  //     where: {
-  //       profesionalId
-  //     }
-  //   })
-
-  //   if (!profesionalFound) {
-  //     return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
-  //   }
-
-  //   const updateprofesional = Object.assign(profesionalFound, profesional);
-  //   return this.profesionalRepository.save(updateprofesional);
-  // }
-
-  async deleteProfesional(profesionalId: number) {
-    const result = await this.profesionalRepository.delete({ profesionalId });
-
-    if (result.affected === 0) {
-      return new HttpException('Usuario nop encontrado', HttpStatus.NOT_FOUND)
-    }
-
-    return result
-  }
-
 
   async searchProfesionales(query: string) {
-    return this.profesionalRepository
+    return await this.profesionalRepository
       .createQueryBuilder('profesional')
       .leftJoinAndSelect('profesional.tipoProfesion', 'profesion')
       .where(
@@ -123,19 +68,12 @@ export class ProfesionalService {
       .getMany();
   }
 
-  async findProfesionesByProfesionalId(profesionalId: number): Promise<Profesion[]> {
-    const profesional = await this.profesionalRepository.findOne({
-      where: { profesionalId },
-      relations: ["tipoProfesion"]
-    });
-    if (profesional) {
-      return profesional.tipoProfesion;
-    } else {
-      return [];
-    }
+  findByEmailwithPassword(correo: string) {
+    return this.profesionalRepository.findOne({
+      where: { correo },
+      select: ['profesionalId', 'nombre', 'apellido', 'correo', 'contrasena',]
+    })
   }
-
-
 
   async update(profesional: Profesional): Promise<Profesional> {
     return this.profesionalRepository.save(profesional);
@@ -160,12 +98,79 @@ export class ProfesionalService {
     }
   }
 
-
-
-
-
   async findById(profesionalId: number): Promise<Profesional> {
     return this.profesionalRepository.findOne({ where: { profesionalId } });
   }
+
+  async deleteProfesional(profesionalId: number) {
+    const result = await this.profesionalRepository.delete({ profesionalId });
+
+    if (result.affected === 0) {
+      return new HttpException('Usuario nop encontrado', HttpStatus.NOT_FOUND)
+    }
+
+    return result
+  }
+
+  // async getProfesionalById(profesionalId: number): Promise<Profesional> {
+  //   try {
+  //     return await this.profesionalRepository
+  //       .createQueryBuilder('profesional')
+  //       .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Asegúrate de reemplazar 'profesiones' con el nombre real de tu relación
+  //       .where('profesional.profesionalId = :profesionalId', { profesionalId })
+  //       .getOne();      
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }
+
+  // async findOneByEmail(correo: string) {
+  //   try {
+  //     return await this.profesionalRepository.findOne({
+  //       where: {
+  //         correo: correo
+  //       }
+  //     })
+
+  //   } catch (error) {
+  //     console.log(error.message);
+
+  //   }
+  // }
+
+  // async findProfesionalWithProfesion(profesionalId: number): Promise<Profesional> {
+  //   return this.profesionalRepository
+  //     .createQueryBuilder('profesional')
+  //     .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Carga la relación con la profesión
+  //     .where('profesional.profesionalId = :id', { id: profesionalId })
+  //     .getOne();
+  // }
+
+  // async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
+  //   const profesionalFound = await this.profesionalRepository.findOne({
+  //     where: {
+  //       profesionalId
+  //     }
+  //   })
+
+  //   if (!profesionalFound) {
+  //     return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
+  //   }
+
+  //   const updateprofesional = Object.assign(profesionalFound, profesional);
+  //   return this.profesionalRepository.save(updateprofesional);
+  // }
+
+  // async findProfesionesByProfesionalId(profesionalId: number): Promise<Profesion[]> {
+  //   const profesional = await this.profesionalRepository.findOne({
+  //     where: { profesionalId },
+  //     relations: ["tipoProfesion"]
+  //   });
+  //   if (profesional) {
+  //     return profesional.tipoProfesion;
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
 }

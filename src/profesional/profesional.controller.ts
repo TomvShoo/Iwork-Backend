@@ -67,6 +67,11 @@ export class ProfesionalController {
   //   return resultados;
   // }
 
+  @Get('id/:profesionalId')
+  async getProfesionalById(@Param('profesionalId') profesionalId: number) {
+    return this.profesionalService.getProfesional(profesionalId);
+  } // El metodo de abajo solo funciona si esto esta comentado ARREGLAR ESO
+
   @Get('search')
   async searchProfesionales(@Query('query') query: string) {
     if (!query) {
@@ -217,15 +222,15 @@ export class ProfesionalController {
 
 
 
-  @Get()
-  getProfesionals(): Promise<Profesional[]> {
-    return this.profesionalService.getProfesionals()
-  }
+  // @Get()
+  // getProfesionals(): Promise<Profesional[]> {
+  //   return this.profesionalService.getProfesionals()
+  // }
 
-  @Get(':id')
-  getProfesional(@Param('id', ParseIntPipe) id: number) {
-    return this.profesionalService.getProfesional(id)
-  }
+  // @Get(':id')
+  // getProfesional(@Param('id', ParseIntPipe) id: number) {
+  //   return this.profesionalService.getProfesional(id)
+  // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateProfesionalDto: UpdateProfesionalDto) {
