@@ -5,12 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Reseña } from './entities/reseña.entity';
 import { Repository } from 'typeorm';
 import { Profesional } from 'src/profesional/entities/profesional.entity';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class ReseñaService {
   constructor(
     @InjectRepository(Reseña) private readonly resenaRepository: Repository<Reseña>,
-    @InjectRepository(Profesional) private readonly profesionalRepository: Repository<Profesional>
+    @InjectRepository(Profesional) private readonly profesionalRepository: Repository<Profesional>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }
 
   async createResena(reseña: CreateReseñaDto, userid: number, profesionalId: number) {
@@ -47,10 +49,18 @@ export class ReseñaService {
       const resenas = await this.resenaRepository.find({
         where: {
           dueno: { profesionalId }
-        }
+        },
+        relations: ['escritor']
       });
-  
-      return resenas;
+
+      const resenasWithUsernames = await Promise.all(
+        resenas.map(async (resena) => {
+          const user = await this.userRepository.findOne({ where: { id: resena.userid } });
+          return { ...resena, nombreUsuario: user ? `${user.nombre} ${user.apellido}` : 'Usuario desconocido' };
+        })
+      );
+
+      return resenasWithUsernames;
     } catch (error) {
       throw new Error('Error al buscar las reseñas por ID de profesional');
     }
