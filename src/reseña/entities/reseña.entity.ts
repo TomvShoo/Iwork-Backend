@@ -17,7 +17,6 @@ export class Reseña {
     dueno: Profesional
 
     @ManyToOne(() => User, user => user.resena)
-    // @JoinColumn({ name: 'profesionalId'})
     escritor: User
 
     @Column({ nullable: false })

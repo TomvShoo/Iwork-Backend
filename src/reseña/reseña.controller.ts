@@ -8,18 +8,13 @@ import { JwtService } from '@nestjs/jwt';
 @Controller('resena')
 export class ReseñaController {
   constructor(private readonly reseñaService: ReseñaService,
-              private readonly jwtService: JwtService,) {}
-
-  // @Post()
-  // create(@Body() createReseñaDto: CreateReseñaDto) {
-  //   return this.reseñaService.createResena(createReseñaDto);
-  // }
+    private readonly jwtService: JwtService,) { }
 
   @Post('subirResena')
   async uploadResena(@Body() resenaData: CreateReseñaDto, @Req() req: Request) {
     try {
-      const {authorization} = req.headers;
-      const token = authorization.split(' ') [1];
+      const { authorization } = req.headers;
+      const token = authorization.split(' ')[1];
 
       const decodedToken = this.jwtService.decode(token);
 
@@ -27,21 +22,34 @@ export class ReseñaController {
         return {
           success: false,
           data: 'error en el token'
-        };    
+        };
       }
 
       const userId = decodedToken.id
+      const profesionalId = resenaData.profesionalId;
 
       const resena = {
         calificacion: resenaData.calificacion,
         resena: resenaData.resena,
+        profesionalId: profesionalId,
       }
 
-      const result = await this.reseñaService.createResena(resena, userId);
+      const result = await this.reseñaService.createResena(resena, userId, profesionalId);
       return result
     } catch (error) {
       console.log(error.message);
-      throw new Error('No se pudo guardar la reseña')      
+      throw new Error('No se pudo guardar la reseña')
+    }
+  }
+
+  @Get('profesional/:profesionalId')
+  async findResenaByProfesionalId(@Param('profesionalId') duenoProfesionalID: number) {
+    try {
+      const resenas = await this.reseñaService.findResenasByProfesionalId(duenoProfesionalID);
+      return resenas;
+    } catch (error) {
+      console.error('Error fetching reseñas by profesional ID:', error);
+      throw new Error('No se pudieron obtener las reseñas del profesional');
     }
   }
 
