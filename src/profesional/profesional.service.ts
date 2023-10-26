@@ -71,7 +71,7 @@ export class ProfesionalService {
   findByEmailwithPassword(correo: string) {
     return this.profesionalRepository.findOne({
       where: { correo },
-      select: ['profesionalId', 'nombre', 'apellido', 'correo', 'contrasena',]
+      select: ['id', 'nombre', 'apellido', 'correo', 'contrasena',]
     })
   }
 
@@ -80,9 +80,9 @@ export class ProfesionalService {
   }
 
 
-  async updateProfesional(profesionalId: number, profesiones: Profesion[]): Promise<Profesional | undefined> {
+  async updateProfesional(id: number, profesiones: Profesion[]): Promise<Profesional | undefined> {
     try {
-      const profesional = await this.profesionalRepository.findOne({ where: { profesionalId }, relations: ["tipoProfesion"] });
+      const profesional = await this.profesionalRepository.findOne({ where: { id }, relations: ["tipoProfesion"] });
       if (!profesional) {
         throw new Error('Profesional no encontrado');
       }
@@ -98,12 +98,12 @@ export class ProfesionalService {
     }
   }
 
-  async findById(profesionalId: number): Promise<Profesional> {
-    return this.profesionalRepository.findOne({ where: { profesionalId } });
+  async findById(id: number): Promise<Profesional> {
+    return this.profesionalRepository.findOne({ where: { id } });
   }
 
-  async deleteProfesional(profesionalId: number) {
-    const result = await this.profesionalRepository.delete({ profesionalId });
+  async deleteProfesional(id: number) {
+    const result = await this.profesionalRepository.delete({ id });
 
     if (result.affected === 0) {
       return new HttpException('Usuario nop encontrado', HttpStatus.NOT_FOUND)

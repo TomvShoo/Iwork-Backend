@@ -57,23 +57,35 @@ export class AuthService {
         }
     }
 
-    async login({ correo, contrasena, tipoCuenta }: LoginDto) {
-        let user;
+    async login({ correo, contrasena }: LoginDto) {
+        let user = await this.userService.findOneByEmail(correo);
         let userId;
+        let tipoCuenta;
 
-        if (tipoCuenta === 'cliente') {
-            user = await this.userService.findOneByEmail(correo);
-            if (user) {
-                userId = user.id;
-            }
-        } else if (tipoCuenta === 'profesional') {
+        if (!user) {
             user = await this.profesionalService.findOneByEmail(correo);
             if (user) {
-                userId = user.profesionalId;
+                userId = user.id;
+                tipoCuenta = 'profesional';
             }
         } else {
-            throw new BadRequestException('Tipo de cuenta no válido');
+            userId = user.id;
+            tipoCuenta = 'cliente';
         }
+
+        // if (tipoCuenta === 'cliente') {
+        //     user = await this.userService.findOneByEmail(correo);
+        //     if (user) {
+        //         userId = user.id;
+        //     }
+        // } else if (tipoCuenta === 'profesional') {
+        //     user = await this.profesionalService.findOneByEmail(correo);
+        //     if (user) {
+        //         userId = user.profesionalId;
+        //     }
+        // } else {
+        //     throw new BadRequestException('Tipo de cuenta no válido');
+        // }
 
         if (!user) {
             throw new UnauthorizedException('Correo es incorrecto o no existe');
@@ -84,7 +96,15 @@ export class AuthService {
             throw new UnauthorizedException('Contrasena es incorrecta');
         }
 
-        if (user.tipoCuenta !== tipoCuenta) {
+        // if (user.tipoCuenta !== tipoCuenta) {
+        //     throw new UnauthorizedException('No tienes permisos para iniciar sesión con este tipo de cuenta');
+        // }
+
+        if (tipoCuenta === 'profesional' && !user.tipoCuenta) {
+            throw new UnauthorizedException('El usuario no tiene un tipo de cuenta definido');
+        }
+    
+        if (tipoCuenta === 'cliente' && user.tipoCuenta !== 'cliente') {
             throw new UnauthorizedException('No tienes permisos para iniciar sesión con este tipo de cuenta');
         }
 

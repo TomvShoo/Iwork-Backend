@@ -93,7 +93,7 @@ export class ProfesionalController {
 
           // Devuelve el objeto con las profesiones asignadas al profesional
           return {
-            id: profesional.profesionalId,
+            id: profesional.id,
             nombre: profesional.nombre,
             apellido: profesional.apellido,
             correo: profesional.correo,
@@ -103,7 +103,7 @@ export class ProfesionalController {
         } else {
           // Devuelve el objeto sin la profesión si no está definida
           return {
-            id: profesional.profesionalId,
+            id: profesional.id,
             nombre: profesional.nombre,
             apellido: profesional.apellido,
             correo: profesional.correo,

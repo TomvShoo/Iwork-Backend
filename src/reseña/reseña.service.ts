@@ -15,14 +15,14 @@ export class ReseñaService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }
 
-  async createResena(reseña: CreateReseñaDto, userid: number, profesionalId: number) {
+  async createResena(reseña: CreateReseñaDto, userid: number, id: number) {
     try {
       const newResena = new Reseña();
       newResena.calificacion = reseña.calificacion;
       newResena.resena = reseña.resena;
       newResena.userid = userid;
 
-      const profesional = await this.profesionalRepository.findOne({ where: { profesionalId: profesionalId } });
+      const profesional = await this.profesionalRepository.findOne({ where: { id: id } });
 
 
       if (!profesional) {
@@ -44,11 +44,11 @@ export class ReseñaService {
     }
   }
 
-  async findResenasByProfesionalId(profesionalId: number) {
+  async findResenasByProfesionalId(id: number) {
     try {
       const resenas = await this.resenaRepository.find({
         where: {
-          dueno: { profesionalId }
+          dueno: { id }
         },
         relations: ['escritor']
       });

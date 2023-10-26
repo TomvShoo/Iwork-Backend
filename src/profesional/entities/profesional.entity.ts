@@ -7,7 +7,7 @@ import { Reseña } from "src/reseña/entities/reseña.entity";
 @Entity('profesional')
 export class Profesional {
     @PrimaryGeneratedColumn()
-    profesionalId: number;
+    id: number;
 
     @Column()
     nombre: string;
