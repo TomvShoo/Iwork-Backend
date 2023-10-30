@@ -2,6 +2,7 @@ import { CartaTrabajo } from "src/carta-trabajo/entities/carta-trabajo.entity";
 import { Role } from "../common/enums/rol.enum";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Reseña } from "src/reseña/entities/reseña.entity";
+import { Reclamo } from "src/reclamo/entities/reclamo.entity";
 
 @Entity({ name: 'cliente' })
 export class User {

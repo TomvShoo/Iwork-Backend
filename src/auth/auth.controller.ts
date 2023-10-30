@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -18,45 +18,31 @@ interface RequestWithUser extends Request {
     }
 }
 
-
 @Controller('auth')
 export class AuthController {
 
-    constructor( private readonly authService: AuthService,) {}
+    constructor(private readonly authService: AuthService,) { }
 
     @Post('register')
     register(
         @Body()
-        registerDto: RegisterDto, ) {
+        registerDto: RegisterDto,) {
         return this.authService.register(registerDto);
     }
 
     @Post('login')
-    login(@Body() loginDto: LoginDto, ) {
+    login(@Body() loginDto: LoginDto,) {
         return this.authService.login(loginDto);
     }
 
-    // @Get('perfil')
-    // @Roles(Role.USER)
-    // @UseGuards(AuthGuard, RolesGuard)
-    // profile(@Req() req: RequestWithUser) {
-    //     return this.authService.profile(req.user)
-    // }
-
     @Get('perfil')
-    // @Auth(Role.CLIENTE)
+    @Auth()
     @UseGuards(AuthGuard, RolesGuard)
-    profile(@ActiveUser() user: UserActiveInterface) {
-        return this.authService.profileCli(user)
-    };
-
-    
-
-    // @Get('perfilPro')
-    // @Auth(Role.PROFESIONAL)
-    // @UseGuards(AuthGuard, RolesGuard)
-    // profile(@Req() req: RequestWithUser) {
-    //     return this.authService.profilePro(req.user)
-    // }
-
+    async profile(@ActiveUser() user: UserActiveInterface) {
+        if (user.role === Role.CLIENTE) {
+            return await this.authService.profileCli({ correo: user.correo, role: 'cliente' });
+        } else if (user.role === Role.PROFESIONAL) {
+            return await this.authService.profilePro({ correo: user.correo, role: 'profesional' });
+        }
+    }
 }

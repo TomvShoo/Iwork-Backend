@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProfesionDto } from './dto/create-profesion.dto';
 import { UpdateProfesionDto } from './dto/update-profesion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,6 +29,16 @@ export class ProfesionService {
   async findById(id_profesion: number): Promise<Profesion[]> {
     return this.profesionRepository.find({ where: { id_profesion } });
   }
+
+  async deleteProfesion(id_profesion: number) {
+    const result = await this.profesionRepository.delete({ id_profesion });
+
+    if(result.affected === 0) {
+        return new HttpException('profesion no encontrada', HttpStatus.NOT_FOUND)
+    }
+
+    return result
+}
 
   // findOne(id: number) {
   //   return `This action returns a #${id} profesion`;

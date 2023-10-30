@@ -6,6 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ProfesionalService } from 'src/profesional/profesional.service';
 import { ProfesionModule } from 'src/profesion/profesion.module';
+import { User } from 'src/users/user.entity';
 @Injectable()
 export class AuthService {
 
@@ -73,20 +74,6 @@ export class AuthService {
             tipoCuenta = 'cliente';
         }
 
-        // if (tipoCuenta === 'cliente') {
-        //     user = await this.userService.findOneByEmail(correo);
-        //     if (user) {
-        //         userId = user.id;
-        //     }
-        // } else if (tipoCuenta === 'profesional') {
-        //     user = await this.profesionalService.findOneByEmail(correo);
-        //     if (user) {
-        //         userId = user.profesionalId;
-        //     }
-        // } else {
-        //     throw new BadRequestException('Tipo de cuenta no válido');
-        // }
-
         if (!user) {
             throw new UnauthorizedException('Correo es incorrecto o no existe');
         }
@@ -96,14 +83,10 @@ export class AuthService {
             throw new UnauthorizedException('Contrasena es incorrecta');
         }
 
-        // if (user.tipoCuenta !== tipoCuenta) {
-        //     throw new UnauthorizedException('No tienes permisos para iniciar sesión con este tipo de cuenta');
-        // }
-
         if (tipoCuenta === 'profesional' && !user.tipoCuenta) {
             throw new UnauthorizedException('El usuario no tiene un tipo de cuenta definido');
         }
-    
+
         if (tipoCuenta === 'cliente' && user.tipoCuenta !== 'cliente') {
             throw new UnauthorizedException('No tienes permisos para iniciar sesión con este tipo de cuenta');
         }
@@ -122,22 +105,52 @@ export class AuthService {
     }
 
     async profileCli({ correo, role }: { correo: string; role: string; }) {
-        if (role === 'cliente') {
-            return await this.userService.findOneByEmail(correo);
-        } else if (role === 'profesional') {
-            return await this.profesionalService.findOneByEmail(correo)
-        } else {
-            throw new UnauthorizedException('Tipo de usuario no valido');
-        }
+        return await this.userService.findOneByEmail(correo);
     }
 
+
     async profilePro({ correo, role }: { correo: string; role: string; }) {
-        if (role === 'cliente') {
-            return await this.userService.findOneByEmail(correo);
-        } else if (role === 'profesional') {
-            return await this.profesionalService.findOneByEmail(correo)
-        } else {
-            throw new UnauthorizedException('Tipo de usuario no valido');
-        }
+        return await this.profesionalService.findOneByEmail(correo)
+       
     }
+
+    // async profileCli({ correo, role }: { correo: string; role: string }) {
+    //     if (role === 'cliente') {
+    //       const user = await this.userService.findOneByEmail(correo);
+    //       if (user) {
+    //         // Aquí puedes formatear los datos si es necesario antes de devolverlos
+    //         return {
+    //           id: user.id,
+    //           nombre: user.nombre,
+    //           apellido: user.apellido,
+    //           correo: user.correo,
+    //           // Agrega otros campos según sea necesario
+    //         };
+    //       }
+    //     } else if (role === 'profesional') {
+    //       const profesional = await this.profesionalService.findOneByEmail(correo);
+    //       if (profesional) {
+    //         // Aquí puedes formatear los datos si es necesario antes de devolverlos
+    //         return {
+    //           id: profesional.id,
+    //           nombre: profesional.nombre,
+    //           apellido: profesional.apellido,
+    //           correo: profesional.correo,
+    //           // Agrega otros campos según sea necesario
+    //         };
+    //       }
+    //     } else {
+    //       throw new UnauthorizedException('Tipo de usuario no válido');
+    //     }
+    //   }
+
+    // async profile({ correo, role }: { correo: string; role: Role }) {
+    //     if (role === Role.CLIENTE) {
+    //         return await this.userService.findOneByEmail(correo);
+    //     } else if (role === Role.PROFESIONAL) {
+    //         return await this.profesionalService.findOneByEmail(correo);
+    //     } else {
+    //         throw new UnauthorizedException('Tipo de usuario no válido');
+    //     }
+    // }
 }

@@ -42,8 +42,8 @@ export class ReseñaController {
     }
   }
 
-  @Get('profesional/:profesionalId')
-  async findResenaByProfesionalId(@Param('profesionalId') duenoProfesionalID: number) {
+  @Get('profesional/:id')
+  async findResenaByProfesionalId(@Param('id') duenoProfesionalID: number) {
     try {
       const resenas = await this.reseñaService.findResenasByProfesionalId(duenoProfesionalID);
       return resenas;

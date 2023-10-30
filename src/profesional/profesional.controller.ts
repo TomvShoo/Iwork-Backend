@@ -17,60 +17,19 @@ export class ProfesionalController {
     private readonly jwtService: JwtService,) { }
 
   @Get()
-  async getProfesionales() {
-    return this.profesionalService.getProfesionals();
+  getProfesionals(): Promise<Profesional[]> {
+    return this.profesionalService.getProfesionals()
   }
 
-  // @Get('search')
-  // async searchProfesionales(@Query('query') query: string) {
-  //   if (!query) {
-  //     return new HttpException('Please provide a valid search query.', HttpStatus.BAD_REQUEST);
-  //   }
+  @Delete(':id')
+  deleteProfesional(@Param('id', ParseIntPipe) id: number) {
+    return this.profesionalService.deleteProfesional(id)
+  }
 
-  //   const profesionales = await this.profesionalService.searchProfesionales(query);
-
-  //   // Iterar sobre cada profesional y obtener todas las profesiones asignadas
-  //   const resultados = await Promise.all(
-  //     profesionales.map(async (profesional) => {
-  //       if (profesional.tipoProfesion && profesional.tipoProfesion.length > 0) {
-  //         const profesiones = await Promise.all(
-  //           profesional.tipoProfesion.map(async (profesion) => {
-  //             // return await this.profesionService.findById(profesion.id_profesion); // se sobreescribe la que esta
-  //             // return await this.profesionService.findAllProfesion() // se le asignan todas
-  //             return await this.profesionService.findAllProfesion();
-  //           })
-  //         );
-
-  //         // Devuelve el objeto con todas las profesiones asignadas
-  //         return {
-  //           id: profesional.profesionalId,
-  //           nombre: profesional.nombre,
-  //           apellido: profesional.apellido,
-  //           correo: profesional.correo,
-  //           nroTelefono: profesional.nroTelefono,
-  //           tipoProfesion: profesiones, // Asegúrate de ajustar el nombre del campo según tu modelo de datos
-  //         };
-  //       } else {
-  //         // Devuelve el objeto sin la profesión si no está definida
-  //         return {
-  //           id: profesional.profesionalId,
-  //           nombre: profesional.nombre,
-  //           apellido: profesional.apellido,
-  //           correo: profesional.correo,
-  //           nroTelefono: profesional.nroTelefono,
-  //           tipoProfesion: [], // O cualquier otro valor predeterminado apropiado
-  //         };
-  //       }
-  //     })
-  //   );
-
-  //   return resultados;
-  // }
-
-  @Get('id/:profesionalId')
-  async getProfesionalById(@Param('profesionalId') profesionalId: number) {
+  @Get('id/:id')
+  async getProfesionalById(@Param('id') profesionalId: number) {
     return this.profesionalService.getProfesional(profesionalId);
-  } // El metodo de abajo solo funciona si esto esta comentado ARREGLAR ESO
+  }
 
   @Get('search')
   async searchProfesionales(@Query('query') query: string) {
@@ -79,8 +38,6 @@ export class ProfesionalController {
     }
 
     const profesionales = await this.profesionalService.searchProfesionales(query);
-
-    // Filtrar las profesiones asignadas al profesional en cuestión
     const resultados = await Promise.all(
       profesionales.map(async (profesional) => {
         if (profesional.tipoProfesion && profesional.tipoProfesion.length > 0) {
@@ -90,8 +47,6 @@ export class ProfesionalController {
               nombre_profesion: profesion.nombre_profesion,
             };
           });
-
-          // Devuelve el objeto con las profesiones asignadas al profesional
           return {
             id: profesional.id,
             nombre: profesional.nombre,
@@ -101,22 +56,19 @@ export class ProfesionalController {
             tipoProfesion: profesionesAsignadas,
           };
         } else {
-          // Devuelve el objeto sin la profesión si no está definida
           return {
             id: profesional.id,
             nombre: profesional.nombre,
             apellido: profesional.apellido,
             correo: profesional.correo,
             nroTelefono: profesional.nroTelefono,
-            tipoProfesion: [], // O cualquier otro valor predeterminado apropiado
+            tipoProfesion: [],
           };
         }
       })
     );
-
     return resultados;
   }
-
 
   @Post()
   createUser(@Body() NewProfesional: CreateProfesionalDto) {
@@ -141,43 +93,115 @@ export class ProfesionalController {
       }
 
       const profesionalId = decodedToken.id;
-
       const profesional = await this.profesionalService.findById(profesionalId);
       const profesion = await this.profesionService.findById(profesionId);
 
-      // if (profesional && profesion) {
-      //   if (!profesional.tipoProfesion) {
-      //     profesional.tipoProfesion = [];
-      //   }
-      //   profesional.tipoProfesion.push(profesion[0]);
-      //   await this.profesionalService.update(profesional);
-      //   return { message: 'Profesión asignada con éxito' };
-      // } else {
-      //   return { message: 'No se pudo encontrar el profesional o la profesión' };
-      // }
-
       if (profesional && profesion) {
-        await this.profesionalService.updateProfesional(profesionalId, profesion); // Utiliza la nueva función de actualización
+        await this.profesionalService.updateProfesional(profesionalId, profesion);
         return { message: 'Profesión asignada con éxito' };
       } else {
         return { message: 'No se pudo encontrar el profesional o la profesión' };
       }
 
-      // if (profesional && profesion) {
-      //   // Asegúrate de que profesional.tipoProfesion sea una matriz o una lista
-      //   profesional.tipoProfesion.push(profesion[0]);
-      //   await this.profesionalService.update(profesional);
-      //   // return { message: 'Profesión asignada con éxito' };
-      //   return console.log(profesion, profesional);
-
-      // } else {
-      //   return { message: 'No se pudo encontrar el profesional o la profesión' };
-      //   return console.log(profesion, profesional);
-      // }
-
     } catch (error) {
       console.log(error.message);
       throw new Error('No se pudo asignar la profesión');
+    }
+  }
+
+
+  // @Delete('eliminar-profesion/:profesionId')
+  // async eliminarProfesion(@Param('profesionId') profesionId: number,
+  //   @Req() req: Request,): Promise<any> {
+  //   try {
+  //     const { authorization } = req.headers;
+  //     const token = authorization.split(' ')[1];
+
+  //     const decodedToken = this.jwtService.decode(token);
+
+  //     if (typeof decodedToken === 'string') {
+  //       return {
+  //         message: 'Error en el token',
+  //       };
+  //     }
+
+  //     const profesionalId = decodedToken.id;
+  //     const removedProfesion = await this.profesionService.findById(profesionId);
+
+  //     const response = await this.profesionalService.deleteProfesion(profesionalId, removedProfesion)
+
+  //     if (!profesionalId) {
+  //       return {
+  //         message: 'El ID del profesional no se encontró en el token',
+  //       };
+  //     }
+
+  //     if (response) {
+  //       return { message: 'profesion eliminada' };
+  //     } else {
+  //       return { message: 'profesion no asignada al profesional' }
+  //     }
+  //     // const profesional = await this.profesionalService.findById(profesionalId);
+  //     // const profesion = await this.profesionService.findById(profesionId);
+
+  //     // if (profesional && profesion) {
+  //     //   const removedProfesiones = profesional.tipoProfesion.filter(
+  //     //     (prof) => prof.id_profesion === profesionId
+  //     //   );
+  //     //   if (removedProfesiones.length > 0) {
+  //     //     await this.profesionalService.deleteProfesion(profesionalId, removedProfesiones);
+  //     //     return { message: 'Profesion eliminada' };
+  //     //   } else {
+  //     //     return { message: 'Profesion no asignada al profesional' }
+  //     //   }
+  //     // } else {
+  //     //   return { message: 'Error al encontrar al profesional o la profesion' }
+  //     // }
+
+  //     // if (profesional) {
+  //     //   const index = profesional.tipoProfesion.findIndex(
+  //     //     (profesion) => profesion.id_profesion === profesionId
+  //     //   );
+  //     //   if (index !== -1) {
+  //     //     const removedProfesiones = [profesional.tipoProfesion[index]]
+  //     //     profesional.tipoProfesion.splice(index, 1);
+  //     //     await this.profesionalService.deleteProfesion(profesionalId, removedProfesiones)
+  //     //     return { message: 'Profesion eliminada' };
+  //     //   } else {
+  //     //     return { message: 'Esta profesion no esta asignada al profesional' };
+  //     //   }
+  //     // } else {
+  //     //   return { message: 'No se encuentra al profesional' };
+  //     // }
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new Error('Error al eliminar la profesion')
+  //   };
+  // }
+
+  @Patch('eliminar-profesion/:profesionId')
+  async eliminarProfesion(
+    @Param('profesionId') profesionId: number,
+    @Req() req: Request,
+  ): Promise<any> {
+    try {
+      const { authorization } = req.headers;
+      const token = authorization.split(' ')[1];
+
+      const decodedToken = this.jwtService.decode(token);
+
+      if (typeof decodedToken === 'string') {
+        return {
+          message: 'Error en el token',
+        };
+      }
+
+      const profesionalId = decodedToken.id;
+      const response = await this.profesionalService.eliminarProfesion(profesionalId, profesionId);
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error al eliminar la profesion');
     }
   }
 
@@ -222,10 +246,6 @@ export class ProfesionalController {
 
 
 
-  // @Get()
-  // getProfesionals(): Promise<Profesional[]> {
-  //   return this.profesionalService.getProfesionals()
-  // }
 
   // @Get(':id')
   // getProfesional(@Param('id', ParseIntPipe) id: number) {
@@ -235,12 +255,5 @@ export class ProfesionalController {
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateProfesionalDto: UpdateProfesionalDto) {
   //   return this.profesionalService.updateProfesional(+id, updateProfesionalDto);
-  // }
-
-  @Delete(':id')
-  deleteProfesional(@Param('id', ParseIntPipe) id: number) {
-    return this.profesionalService.deleteProfesional(id)
-  }
-
+  // 
 }
-

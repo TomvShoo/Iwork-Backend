@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, ParseIntPipe, Delete, Patch, Req, Query, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, ParseIntPipe, Delete, Patch, Req, Query, BadRequestException, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -6,8 +6,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from 'src/common/enums/rol.enum';
 import {Request} from "express";
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
-// @Auth(Role.CLIENTE)
+@UseGuards(RolesGuard)
 @Controller('users')
 export class UsersController {
 
@@ -19,6 +21,7 @@ export class UsersController {
     }
     
     @Get(':id')
+    @Roles(Role.CLIENTE, Role.ADMIN)
     getUser(@Param('id', ParseIntPipe) id: number) {
         return this.usersService.getUser(id);
     }
@@ -45,7 +48,7 @@ export class UsersController {
         if (!query) {
         throw new BadRequestException('Please provide a valid search query.');
         }
-        return this.usersService.searchProfessionals(query.toString());
+        return this.usersService.searchUser(query.toString());
     }
 
     // @Get('frontend')

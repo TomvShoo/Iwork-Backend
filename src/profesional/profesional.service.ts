@@ -39,7 +39,7 @@ export class ProfesionalService {
     try {
       return await this.profesionalRepository
         .createQueryBuilder('profesional')
-        .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Carga la relación con la profesión
+        .leftJoinAndSelect('profesional.tipoProfesion', 'profesion')
         .where('profesional.correo = :correo', { correo })
         .getOne();
     } catch (error) {
@@ -47,14 +47,12 @@ export class ProfesionalService {
     }
   }
 
-  async getProfesional(profesionalId: number) {
-    
+  async getProfesional(id: number) {
       return await this.profesionalRepository
         .createQueryBuilder('profesional')
-        .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Asegúrate de reemplazar 'profesiones' con el nombre real de tu relación
-        .where('profesional.profesionalId = :profesionalId', { profesionalId })
+        .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') 
+        .where('profesional.id = :id', { id })
         .getOne();
-    
   }
 
   async searchProfesionales(query: string) {
@@ -95,6 +93,36 @@ export class ProfesionalService {
     } catch (error) {
       console.log(error.message);
       throw new Error('No se pudo actualizar el profesional');
+    }
+  }
+  
+  async eliminarProfesion(profesionalId: number, profesionId: number): Promise<any> {
+    try {
+      const profesional = await this.profesionalRepository.findOne({
+        where: { id: profesionalId },
+        relations: ["tipoProfesion"]
+      });
+  
+      if (!profesional) {
+        throw new Error('No se encontró al profesional');
+      }
+  
+      const removedProfesion = profesional.tipoProfesion.find(
+        (profesion) => profesion.id_profesion === profesionId
+      );
+  
+      if (removedProfesion) {
+        profesional.tipoProfesion = profesional.tipoProfesion.filter(
+          (profesion) => profesion.id_profesion !== profesionId
+        );
+        await this.profesionalRepository.save(profesional);
+        return { message: 'Profesion eliminada' };
+      } else {
+        return { message: 'Profesion no asignada al profesional' };
+      }
+    } catch (error) {
+      console.log(error.message);
+      throw new Error('Error al eliminar una profesion');
     }
   }
 

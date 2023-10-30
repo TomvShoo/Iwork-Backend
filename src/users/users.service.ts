@@ -1,4 +1,4 @@
-import { Injectable, HttpException , HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
@@ -10,8 +10,8 @@ import { Profesional } from 'src/profesional/entities/profesional.entity';
 export class UsersService {
 
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
-                @InjectRepository(Profesional) private readonly profesionalRepository: Repository<Profesional>) {}
- 
+        @InjectRepository(Profesional) private readonly profesionalRepository: Repository<Profesional>) { }
+
     async createUser(user: CreateUserDto) {
         const userfound = await this.userRepository.findOne({
             where: {
@@ -29,35 +29,36 @@ export class UsersService {
 
     async findOneByEmail(correo: string) {
         try {
-            return await this.userRepository.findOne({ where: {
-                correo: correo,
-            } })
-            
+            return await this.userRepository.findOne({
+                where: {
+                    correo: correo,
+                }
+            })
         } catch (error) {
             console.log(error.message);
-            
+
         }
     }
 
     findByEmailwithPassword(correo: string) {
         return this.userRepository.findOne({
             where: { correo },
-            select: ['id', 'nombre','apellido','correo','contrasena',]
+            select: ['id', 'nombre', 'apellido', 'correo', 'contrasena',]
         })
     }
 
-    getUsers(){
+    getUsers() {
         return this.userRepository.find()
     }
 
-    async getUser(id: number){
+    async getUser(id: number) {
         const userFound = await this.userRepository.findOne({
             where: {
                 id,
             },
         });
 
-        if(!userFound) {
+        if (!userFound) {
             return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND)
         }
 
@@ -66,22 +67,22 @@ export class UsersService {
 
     async deleteUser(id: number) {
         const result = await this.userRepository.delete({ id });
-    
-        if(result.affected === 0) {
+
+        if (result.affected === 0) {
             return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND)
         }
 
         return result
     }
 
-    async updateUser(id: number, user:UpdateUserDto) {
+    async updateUser(id: number, user: UpdateUserDto) {
         const userFound = await this.userRepository.findOne({
             where: {
                 id
             }
         })
 
-        if(!userFound) {
+        if (!userFound) {
             return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
         }
 
@@ -89,31 +90,13 @@ export class UsersService {
         return this.userRepository.save(updateUser);
     }
 
-    // async searchProfessionals(query: string) {
-    // return this.profesionalRepository.createQueryBuilder("profesional")
-    //     .where("profesional.nombre LIKE :query", { query: `%${query}%` })
-    //     .orWhere("profesional.profesion LIKE :query", { query: `%${query}%` })
-    //     .getMany();
-    // }
-
-
-    async searchProfessionals(query: string) {
-    return this.profesionalRepository
-        .createQueryBuilder('profesional')
-        .where(
-        'profesional.nombre LIKE :query OR profesional.apellido LIKE :query OR profesional.profesion LIKE :query',
-        { query: `%${query}%` },
-        )
-        .getMany();
+    async searchUser(query: string) {
+        return await this.userRepository
+            .createQueryBuilder('cliente')
+            .where(
+                'cliente.nombre LIKE :query OR cliente.apellido LIKE :query',
+                { query: `%${query}%` },
+            )
+            .getMany();
     }
-
-    // async all(): Promise<Profesional[]> {
-    //     return this.profesionalRepository.find();
-    // }
-
-    // async queryBuilder(alias: string) {
-    //     return this.profesionalRepository.createQueryBuilder(alias);
-    // }
-
-
 }

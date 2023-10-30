@@ -9,6 +9,8 @@ import { ProfesionModule } from './profesion/profesion.module';
 import { PortafolioModule } from './portafolio/portafolio.module';
 import { AuthModule } from './auth/auth.module';
 import { ReseñaModule } from './reseña/reseña.module';
+import { AdminModule } from './admin/admin.module';
+import { ReclamoModule } from './reclamo/reclamo.module';
 
 @Module({
   imports: [
@@ -28,7 +30,9 @@ import { ReseñaModule } from './reseña/reseña.module';
     ProfesionModule,
     PortafolioModule,
     AuthModule,
-    ReseñaModule],
+    ReseñaModule,
+    AdminModule,
+    ReclamoModule],
   controllers: [AppController],
   providers: [AppService],
 })

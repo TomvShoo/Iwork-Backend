@@ -3,6 +3,7 @@ import { Portafolio } from "src/portafolio/entities/portafolio.entity";
 import { CartaTrabajo } from "src/carta-trabajo/entities/carta-trabajo.entity";
 import { Profesion } from "src/profesion/entities/profesion.entity";
 import { Reseña } from "src/reseña/entities/reseña.entity";
+import { Role } from "src/common/enums/rol.enum";
 
 @Entity('profesional')
 export class Profesional {
@@ -27,7 +28,7 @@ export class Profesional {
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
-    @Column()
+    @Column({ default: Role.PROFESIONAL})
     tipoCuenta: string;
 
     @OneToOne(() => Portafolio, (portafolio) => portafolio.profesional)
@@ -40,7 +41,7 @@ export class Profesional {
 
     addProfesion(profesion: Profesion) {
         if (!this.tipoProfesion) {
-            this.tipoProfesion = []; // Asegúrate de inicializar tipoProfesion si es null o undefined
+            this.tipoProfesion = [];
         }
         this.tipoProfesion.push(profesion);
     }
