@@ -16,10 +16,10 @@ import { ReclamoModule } from './reclamo/reclamo.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'iworkdb.cmf8hed8lh5v.us-east-1.rds.amazonaws.com',
       port: 3306,
-      username: 'root',
-      password: 'tomaspassword',
+      username: 'admin',
+      password: 'iworkdbcontra',
       database: 'iworkdb',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true 
@@ -31,8 +31,7 @@ import { ReclamoModule } from './reclamo/reclamo.module';
     PortafolioModule,
     AuthModule,
     ReseñaModule,
-    AdminModule,
-    ReclamoModule],
+    AdminModule],
   controllers: [AppController],
   providers: [AppService],
 })

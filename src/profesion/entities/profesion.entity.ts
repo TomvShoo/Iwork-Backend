@@ -12,15 +12,9 @@ export class Profesion {
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
-
-    
-    // @ManyToOne(() => Profesional, profesional => profesional.tipoProfesion)
-    // dueno: Profesional
-
-    // @ManyToMany(() => Profesional, profesional => profesional.tipoProfesion)
-    // profesionId: Profesional[];
     
     @ManyToMany(() => Profesional, profesional => profesional.tipoProfesion)
-    @JoinTable()
+    // @JoinTable()
+    
     profesionales: Profesional[];
 }

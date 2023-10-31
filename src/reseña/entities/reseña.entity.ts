@@ -17,7 +17,7 @@ export class Reseña {
     @Column({ nullable: true })
     calificacion: number;
 
-    @Column({ nullable: true })
+    @Column("longtext",{ nullable: true })
     resena: string;
 
     @Column({ type: "enum", enum: TipoResena})
@@ -29,7 +29,7 @@ export class Reseña {
     @ManyToOne(() => User, user => user.resena)
     escritor: User
 
-    @ManyToOne(() => Admin, admin => admin.resenas)
+    @ManyToOne(() => Admin, admin => admin.resena)
     admin: Admin;
 
     @Column({ nullable: false })
@@ -37,4 +37,5 @@ export class Reseña {
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
+
 }

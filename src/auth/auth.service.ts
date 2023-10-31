@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ProfesionalService } from 'src/profesional/profesional.service';
 import { ProfesionModule } from 'src/profesion/profesion.module';
 import { User } from 'src/users/user.entity';
+import { AdminService } from 'src/admin/admin.service';
 @Injectable()
 export class AuthService {
 
@@ -14,6 +15,7 @@ export class AuthService {
         private readonly userService: UsersService,
         private readonly jwtService: JwtService,
         private readonly profesionalService: ProfesionalService,
+        private readonly adminService: AdminService,
     ) { }
 
     createToken(payload: any): string {
@@ -68,7 +70,15 @@ export class AuthService {
             if (user) {
                 userId = user.id;
                 tipoCuenta = 'profesional';
-            }
+            } else {
+                const admin = await this.adminService.findOneByEmail(correo);
+                if (admin) {
+                    user = admin;
+                    userId = admin.id;
+                    tipoCuenta = 'admin';
+                    user.contrasena = await bcrypt.hash(contrasena, 10);
+                }
+            }            
         } else {
             userId = user.id;
             tipoCuenta = 'cliente';
@@ -94,7 +104,7 @@ export class AuthService {
         const payload = {
             id: userId,
             correo: user.correo,
-            role: user.tipoCuenta,
+            role: tipoCuenta,
         };
         const token = await this.jwtService.signAsync(payload);
 

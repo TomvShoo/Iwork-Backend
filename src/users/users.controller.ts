@@ -21,11 +21,10 @@ export class UsersController {
     }
     
     @Get(':id')
-    @Roles(Role.CLIENTE, Role.ADMIN)
+    // @Roles(Role.CLIENTE, Role.ADMIN)
     getUser(@Param('id', ParseIntPipe) id: number) {
         return this.usersService.getUser(id);
     }
-
 
     @Post() 
     createUser(@Body() NewUser: CreateUserDto) {
@@ -50,38 +49,37 @@ export class UsersController {
         }
         return this.usersService.searchUser(query.toString());
     }
-
-    // @Get('frontend')
-    // async frontend() {
-    //     return this.usersService.all();
-    // }
-
-    // @Get('backend')
-    // async backend(@Req() req: Request) {
-    //     const builder = await this.usersService.queryBuilder('profesionales');
-
-    //     if (req.query.s) {
-    //         builder.where("products.title LIKE :s OR products.description LIKE :s", {s: `%${req.query.s}%`})
-    //     }
-
-    //     const sort: any = req.query.sort;
-
-    //     if (sort) {
-    //         builder.orderBy('products.price', sort.toUpperCase());
-    //     }
-
-    //     const page: number = parseInt(req.query.page as any) || 1;
-    //     const perPage = 9;
-    //     const total = await builder.getCount();
-
-    //     builder.offset((page - 1) * perPage).limit(perPage);
-
-    //     return {
-    //         data: await builder.getMany(),
-    //         total,
-    //         page,
-    //         last_page: Math.ceil(total / perPage)
-    //     };
-    // }
-
 }
+
+// @Get('frontend')
+// async frontend() {
+//     return this.usersService.all();
+// }
+
+// @Get('backend')
+// async backend(@Req() req: Request) {
+//     const builder = await this.usersService.queryBuilder('profesionales');
+
+//     if (req.query.s) {
+//         builder.where("products.title LIKE :s OR products.description LIKE :s", {s: `%${req.query.s}%`})
+//     }
+
+//     const sort: any = req.query.sort;
+
+//     if (sort) {
+//         builder.orderBy('products.price', sort.toUpperCase());
+//     }
+
+//     const page: number = parseInt(req.query.page as any) || 1;
+//     const perPage = 9;
+//     const total = await builder.getCount();
+
+//     builder.offset((page - 1) * perPage).limit(perPage);
+
+//     return {
+//         data: await builder.getMany(),
+//         total,
+//         page,
+//         last_page: Math.ceil(total / perPage)
+//     };
+// }

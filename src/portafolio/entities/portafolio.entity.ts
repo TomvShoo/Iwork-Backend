@@ -22,10 +22,6 @@ export class Portafolio {
     @OneToOne(() => Profesional, (profesional) => profesional.portafolio)
     @JoinColumn()
     profesional: Profesional
-
-    // @OneToOne(() => Profesional)
-    // @JoinColumn({ name: 'profesionalId', referencedColumnName: 'profesionalId' })
-    // profesional: Profesional;
     
     @Column({ nullable: false })
     profesionalId: number;

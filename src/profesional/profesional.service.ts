@@ -73,12 +73,22 @@ export class ProfesionalService {
     })
   }
 
-  async update(profesional: Profesional): Promise<Profesional> {
-    return this.profesionalRepository.save(profesional);
-  }
+  async updateProfesional(id: number, profesional: UpdateProfesionalDto) {
+    const profesionalFound = await this.profesionalRepository.findOne({
+        where: {
+            id
+        }
+    })
 
+    if (!profesionalFound) {
+        return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
+    }
 
-  async updateProfesional(id: number, profesiones: Profesion[]): Promise<Profesional | undefined> {
+    const updateProfesional = Object.assign(profesionalFound, profesional);
+    return this.profesionalRepository.save(updateProfesional);
+}
+
+  async deleteProfesion(id: number, profesiones: Profesion[]): Promise<Profesional | undefined> {
     try {
       const profesional = await this.profesionalRepository.findOne({ where: { id }, relations: ["tipoProfesion"] });
       if (!profesional) {
@@ -139,6 +149,7 @@ export class ProfesionalService {
 
     return result
   }
+}
 
   // async getProfesionalById(profesionalId: number): Promise<Profesional> {
   //   try {
@@ -200,5 +211,3 @@ export class ProfesionalService {
   //     return [];
   //   }
   // }
-
-}

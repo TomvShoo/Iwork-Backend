@@ -1,15 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePortafolioDto } from './dto/create-portafolio.dto';
-import { UpdatePortafolioDto } from './dto/update-portafolio.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Portafolio } from './entities/portafolio.entity';
 import { Profesional } from '../profesional/entities/profesional.entity';
 import { Repository } from 'typeorm';
-import { CreateProfesionalDto } from '../profesional/dto/create-profesional.dto';
-import { UserActiveInterface } from '../common/interfaces/user-active.interface';
-import * as sharp from 'sharp';
-import * as fs from 'fs';
 import { JwtService } from '@nestjs/jwt';
+import { UpdatePortafolioDto } from './dto/update-portafolio.dto';
 
 @Injectable()
 export class PortafolioService {
@@ -17,7 +13,6 @@ export class PortafolioService {
     @InjectRepository(Portafolio) private portafolioRepository: Repository<Portafolio>,
     @InjectRepository(Profesional) private profesionalRepository: Repository<Profesional>,
                                   private readonly jwtService: JwtService, ) {}
-
 
   async getPortafolio(id_portafolio: number) {
     const portafolioFound = await this.portafolioRepository.findOne({
@@ -47,11 +42,8 @@ export class PortafolioService {
     return portafolios;
   }
 
-
   async createPortafolio(portafolio: CreatePortafolioDto, profesionalId: number) {
-
     const imagen = portafolio.imagen;
-
     try {
       const newPortafolio = new Portafolio();
       newPortafolio.descripcion = portafolio.descripcion;
@@ -71,29 +63,14 @@ export class PortafolioService {
       }      
     }
   }
+
+  async updatePortafolio(id_portafolio: number, portafolio: UpdatePortafolioDto) {
+    const portafolioFound = await this.portafolioRepository.findOne({  where: {id_portafolio} });
+    if (!portafolioFound) {
+      return new HttpException('Portafolio no econtrado :C', HttpStatus.NOT_FOUND);
+    }
+
+    const updatePortafolio = Object.assign(portafolioFound, portafolio);
+    return this.portafolioRepository.save(updatePortafolio);
+  }
 }
-
-  // async createPortafolio(id: number, Portafolio: CreatePortafolioDto) {
-  // const profesionalFound = await this.profesionalRepository.findOne({
-  //    where: {
-  //      id
-  //   }
-  //  })
-
-  //   if (!profesionalFound) {
-  //    return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
-  //   }
-    
-  //   const nuevoPortfolio = this.portafolioRepository.create(Portafolio)
-
-  //   const savePortfolio = await this.portafolioRepository.save(nuevoPortfolio);
-
-  //   profesionalFound.portafolio = savePortfolio
-
-  //   return this.profesionalRepository.save(profesionalFound)
-  // }
-
-
-  // const dataBuffer = Buffer.from(imagen, 'base64');
-      // const processedImageBuffer = await sharp(dataBuffer).toBuffer();
-      // fs.writeFileSync(nombreArchivo, processedImageBuffer);

@@ -9,6 +9,15 @@ export class Admin {
     id: number;
 
     @Column()
+    nombre: string
+
+    @Column()
+    apellido: string
+    
+    @Column()
+    nroTelefono: string
+
+    @Column({ unique: true })
     correo: string;
 
     @Column()
@@ -21,5 +30,5 @@ export class Admin {
     CreatedAt: Date;
 
     @OneToMany(() => Reseña, resena => resena.admin)
-    resenas: Reseña[];
+    resena: Reseña[];
 }

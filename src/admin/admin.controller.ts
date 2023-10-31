@@ -8,8 +8,8 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Post()
-  create(@Body() createAdminDto: CreateAdminDto) {
-    return this.adminService.create(createAdminDto);
+  create(@Body() newAdmin: CreateAdminDto) {
+    return this.adminService.create(newAdmin);
   }
 
   @Get()
@@ -17,9 +17,14 @@ export class AdminController {
     return this.adminService.findAll();
   }
 
+  @Get('correo/:id')
+  findOneByEmail(correo: string) {
+    return this.adminService.findOneByEmail(correo)
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.adminService.findOne(id);
   }
 
   @Patch(':id')

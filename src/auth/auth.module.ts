@@ -5,6 +5,8 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants/jwt.constants';
 import { ProfesionalModule } from 'src/profesional/profesional.module';
+import { AdminModule } from 'src/admin/admin.module';
+import { AdminService } from 'src/admin/admin.service';
 
 @Module({
   imports: [
@@ -15,8 +17,9 @@ import { ProfesionalModule } from 'src/profesional/profesional.module';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1d' },
     }),
+    AdminModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService,]
 })
 export class AuthModule {}
