@@ -21,6 +21,11 @@ export class ProfesionController {
     return this.profesionService.findAllProfesion();
   }
 
+  @Get(':id_profesion')
+  findProfesionalByProfesion(@Param('id_profesion', ParseIntPipe) id: number) {
+    return this.profesionService.findById(id);
+  }
+
   @Delete(':id_profesion')
   @Roles(Role.ADMIN)
   deleteProfesion(@Param('id_profesion', ParseIntPipe) id: number) {

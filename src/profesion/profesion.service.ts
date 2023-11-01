@@ -25,7 +25,7 @@ export class ProfesionService {
   }
 
   async findById(id_profesion: number): Promise<Profesion[]> {
-    return this.profesionRepository.find({ where: { id_profesion } });
+    return this.profesionRepository.find({ where: { id_profesion }, relations: ['profesionales', 'profesionales.resena'] });
   }
 
   async deleteProfesion(id_profesion: number) {
