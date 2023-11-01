@@ -77,6 +77,7 @@ export class ProfesionalController {
   }
 
   @Post('asignar-profesion/:profesionId')
+  @Roles(Role.PROFESIONAL)
   async asignarProfesion(
     @Param('profesionId') profesionId: number,
     @Req() req: Request,
@@ -111,6 +112,7 @@ export class ProfesionalController {
   }
 
   @Patch('eliminar-profesion/:profesionId')
+  @Roles(Role.PROFESIONAL)
   async eliminarProfesion(
     @Param('profesionId') profesionId: number,
     @Req() req: Request,

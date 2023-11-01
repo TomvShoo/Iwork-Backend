@@ -15,6 +15,5 @@ export class Profesion {
     
     @ManyToMany(() => Profesional, profesional => profesional.tipoProfesion)
     // @JoinTable()
-    
     profesionales: Profesional[];
 }

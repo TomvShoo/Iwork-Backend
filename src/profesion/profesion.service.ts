@@ -1,10 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProfesionDto } from './dto/create-profesion.dto';
-import { UpdateProfesionDto } from './dto/update-profesion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profesion } from './entities/profesion.entity';
 import { FindManyOptions, Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ProfesionService {
@@ -18,7 +16,7 @@ export class ProfesionService {
 
   findAllProfesion() {
     return this.profesionRepository.find({
-      relations: ['profesionales']
+      relations: ['profesionales', 'profesionales.resena']
     })
   }
 

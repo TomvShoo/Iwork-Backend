@@ -10,7 +10,6 @@ import { PortafolioModule } from './portafolio/portafolio.module';
 import { AuthModule } from './auth/auth.module';
 import { ReseñaModule } from './reseña/reseña.module';
 import { AdminModule } from './admin/admin.module';
-import { ReclamoModule } from './reclamo/reclamo.module';
 
 @Module({
   imports: [
