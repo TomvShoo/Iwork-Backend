@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, ParseIntPipe } from '@nestjs/common';
 import { ReseñaService } from './reseña.service';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
@@ -54,8 +54,6 @@ export class ReseñaController {
     }
   }
 
-
-
   @Get('profesional/:id')
   async findResenaByProfesionalId(@Param('id') duenoProfesionalID: number) {
     try {
@@ -78,6 +76,17 @@ export class ReseñaController {
     }
   }
 
+  @Delete(':resenaId')
+  async deleteResena(@Param('resenaId', ParseIntPipe) resenaId: number) {
+    try {
+      const resenaABorrar = await this.reseñaService.deleteResena(resenaId);
+      return resenaABorrar;
+    } catch (error) {
+      console.error('error al eliminar la reseña', error);
+      throw new Error('No se pudo eliminar la reseña');
+    }
+  }
+
   @Get()
   findAll() {
     return this.reseñaService.findAll();
@@ -93,8 +102,4 @@ export class ReseñaController {
     return this.reseñaService.update(+id, updateReseñaDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reseñaService.remove(+id);
-  }
 }

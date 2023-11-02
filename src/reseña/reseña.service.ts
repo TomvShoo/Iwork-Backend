@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -146,6 +146,18 @@ export class ReseñaService {
     }
   }
 
+  async deleteResena(resenaId: number) {
+    try {
+      const result = await this.resenaRepository.delete({ resenaId });
+      if (result.affected === 0) {
+        return new HttpException('Reseña no encontrada', HttpStatus.NOT_FOUND)
+    }
+    return result;
+    } catch (error) {
+      console.log('Error al eliminar la reseña', error);      
+    }
+  }
+
   // async findResenasByUserId(id: number) {
   //   try {
   //     const resenas = await this.resenaRepository.find({
@@ -177,9 +189,5 @@ export class ReseñaService {
 
   update(id: number, updateReseñaDto: UpdateReseñaDto) {
     return `This action updates a #${id} reseña`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} reseña`;
   }
 }
