@@ -11,6 +11,16 @@ export class ReseñaController {
   constructor(private readonly reseñaService: ReseñaService,
     private readonly jwtService: JwtService,) { }
 
+  @Get()
+  async findAllResenas() {
+    try {
+      const resenas = await this.reseñaService.findAllResenasWithProfesional();
+      return resenas;
+    } catch (error) {
+      console.error('Error al obtener todas las reseñas', error);
+      throw new Error('No se pudieron obtener las reseñas con el profesional asociado')
+    }
+  }
   @Post('subirResena')
   async uploadResena(@Body() resenaData: CreateReseñaDto, @Req() req: Request) {
     try {
@@ -43,6 +53,8 @@ export class ReseñaController {
       throw new Error('No se pudo guardar la reseña')
     }
   }
+
+
 
   @Get('profesional/:id')
   async findResenaByProfesionalId(@Param('id') duenoProfesionalID: number) {

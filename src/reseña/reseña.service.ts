@@ -51,6 +51,38 @@ export class ReseñaService {
     }
   }
 
+  async findAllResenasWithProfesional() {
+    try {
+      const resenas = await this.resenaRepository.find({
+        relations: ['dueno']
+      });
+
+      const resenasWithProfesionales = await Promise.all(
+        resenas.map(async (resena) => {
+          const profesional = await this.profesionalRepository.findOne({ where: {id: resena.dueno.id} });
+          return {
+            resenaId: resena.resenaId,
+            calificacion: resena.calificacion,
+            resena: resena.resena,
+            tipo: resena.tipo,
+            userid: resena.userid,
+            CreatedAt: resena.CreatedAt,
+            dueno: {
+              id: profesional.id,
+              nombre: profesional.nombre,
+              apellido: profesional.apellido,
+              correo: profesional.correo
+            }
+          };
+        })
+      );
+
+      return resenasWithProfesionales;
+    } catch (error) {
+      throw new Error('Error al obtener todas las reseñas con el profesional asociado');
+    }
+  }
+
   async findResenasByProfesionalId(id: number) {
     try {
       const resenas = await this.resenaRepository.find({
