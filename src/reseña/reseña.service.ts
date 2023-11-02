@@ -60,6 +60,7 @@ export class ReseñaService {
       const resenasWithProfesionales = await Promise.all(
         resenas.map(async (resena) => {
           const profesional = await this.profesionalRepository.findOne({ where: {id: resena.dueno.id} });
+          const cliente = await this.userRepository.findOne({ where: {id: resena.userid} });
           return {
             resenaId: resena.resenaId,
             calificacion: resena.calificacion,
@@ -67,6 +68,12 @@ export class ReseñaService {
             tipo: resena.tipo,
             userid: resena.userid,
             CreatedAt: resena.CreatedAt,
+            escritor: {
+              id: cliente.id,
+              nombre: cliente.nombre,
+              apellido: cliente.apellido,
+              correo: cliente.correo
+            },
             dueno: {
               id: profesional.id,
               nombre: profesional.nombre,
