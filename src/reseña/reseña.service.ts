@@ -66,6 +66,61 @@ export class ReseñaService {
     }
   }
 
+  async findResenasByUserId(userId: number) {
+    try {
+      const resenas = await this.resenaRepository.find({
+        where: {
+          userid: userId
+        },
+        relations: ['dueno'] // Incluye la relación con el profesional
+      });
+
+      const resenasWithProfesionales = await Promise.all(
+        resenas.map(async (resena) => {
+          const profesional = resena.dueno;
+          return {
+            resenaId: resena.resenaId,
+            calificacion: resena.calificacion,
+            resena: resena.resena,
+            tipo: resena.tipo,
+            userid: resena.userid,
+            CreatedAt: resena.CreatedAt,
+            dueno: {
+              id: profesional.id,
+              nombre: profesional.nombre,
+              apellido: profesional.apellido // Agrega otros campos según tus necesidades
+            }
+          };
+        })
+      );
+
+      return resenasWithProfesionales;
+    } catch (error) {
+      throw new Error('Error al buscar las reseñas por ID de usuario: ' + error.message);
+    }
+  }
+
+  // async findResenasByUserId(id: number) {
+  //   try {
+  //     const resenas = await this.resenaRepository.find({
+  //       where: {
+  //         escritor: { id }
+  //       },
+  //       relations: ['dueno']
+  //     });
+
+  //     const resenasWithDuenoName = await Promise.all(
+  //       resenas.map(async (resena) => {
+  //         const dueno = await this.profesionalRepository.findOne({ where: { id: resena.dueno.id } });
+  //         return { ...resena, nombreDueno: dueno ? `${dueno.nombre} ${dueno.apellido}` : 'profesional desconocido' };
+  //       })
+  //     );
+  //     return resenasWithDuenoName;
+  //   } catch (error) {
+  //     throw new Error('error al buscar las reseñas por id de usuario');
+  //   }
+  // }
+
   findAll() {
     return `This action returns all reseña`;
   }

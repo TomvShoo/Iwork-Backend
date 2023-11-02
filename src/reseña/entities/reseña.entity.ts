@@ -1,6 +1,5 @@
 import { Admin } from "src/admin/entities/admin.entity";
 import { Profesional } from "src/profesional/entities/profesional.entity";
-import { Reclamo } from "src/reclamo/entities/reclamo.entity";
 import { User } from "src/users/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -34,6 +33,9 @@ export class Reseña {
 
     @Column({ nullable: false })
     userid: number;
+
+    // @Column()
+    // duenoid: number;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date

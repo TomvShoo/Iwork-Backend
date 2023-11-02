@@ -4,6 +4,7 @@ import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { throws } from 'assert';
 
 @Controller('resena')
 export class ReseñaController {
@@ -50,6 +51,17 @@ export class ReseñaController {
     } catch (error) {
       console.error('Error fetching reseñas by profesional ID:', error);
       throw new Error('No se pudieron obtener las reseñas del profesional');
+    }
+  }
+
+  @Get('cliente/:id')
+  async findResenaByUserId(@Param('id') usuarioId: number) {
+    try {
+      const resenas = await this.reseñaService.findResenasByUserId(usuarioId);
+      return resenas;
+    } catch (error) {
+      console.error('Error al encontrar reseñas del user id', error);
+      throw new Error('No se pudieron obtener las reseñas del usuario');
     }
   }
 
