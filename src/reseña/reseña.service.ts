@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Reseña } from './entities/reseña.entity';
+import { Reseña, TipoResena } from './entities/reseña.entity';
 import { Repository } from 'typeorm';
 import { Profesional } from 'src/profesional/entities/profesional.entity';
 import { User } from 'src/users/user.entity';
@@ -21,9 +21,16 @@ export class ReseñaService {
       newResena.calificacion = reseña.calificacion;
       newResena.resena = reseña.resena;
       newResena.userid = userid;
+      newResena.tipo = reseña.tipo;
 
-      const profesional = await this.profesionalRepository.findOne({ where: { id: id } });
+      let profesional;
 
+      // const profesional = ;
+      if (newResena.tipo === TipoResena.Comentario) {
+        profesional = await this.profesionalRepository.findOne({ where: { id: id } })
+      } else if (newResena.tipo === TipoResena.Reclamo) {
+        profesional = await this.profesionalRepository.findOne({ where: { id: id } })
+      }
 
       if (!profesional) {
         throw new Error('Profesional no encontrado');
@@ -72,7 +79,7 @@ export class ReseñaService {
         where: {
           userid: userId
         },
-        relations: ['dueno'] // Incluye la relación con el profesional
+        relations: ['dueno'] 
       });
 
       const resenasWithProfesionales = await Promise.all(

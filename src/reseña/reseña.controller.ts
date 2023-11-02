@@ -32,6 +32,7 @@ export class ReseñaController {
       const resena = {
         calificacion: resenaData.calificacion,
         resena: resenaData.resena,
+        tipo: resenaData.tipo,
         profesionalId: profesionalId,
       }
 

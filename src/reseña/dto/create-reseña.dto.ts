@@ -1,4 +1,5 @@
-import { IsNumber, IsString } from "class-validator"
+import { IsEnum, IsNumber, IsString } from "class-validator"
+import { TipoResena } from "../entities/reseña.entity";
 
 export class CreateReseñaDto {
     @IsNumber()
@@ -6,6 +7,9 @@ export class CreateReseñaDto {
 
     @IsString()
     resena: string;
+
+    @IsEnum(TipoResena)
+    tipo: TipoResena;
 
     @IsNumber()
     profesionalId: number;
