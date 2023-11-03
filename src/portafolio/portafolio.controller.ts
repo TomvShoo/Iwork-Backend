@@ -17,7 +17,7 @@ export class PortafolioController {
               private readonly jwtService: JwtService,) {}
 
   @Get(':id')
-  @Roles(Role.PROFESIONAL)
+  @Roles(Role.PROFESIONAL, Role.CLIENTE)
   async getPortafolio(@Param('id', ParseIntPipe) id: number) {
     const portafolio = await this.portafolioService.getPortafolio(id);
     if (!portafolio) {
@@ -57,7 +57,7 @@ export class PortafolioController {
   }
 
   @Get('profesional/:id')
-  @Roles(Role.PROFESIONAL)
+  @Roles(Role.PROFESIONAL, Role.CLIENTE)
   async getPortafoliosByProfesionalId(@Param('id') profesionalId: number) {
     try {
       const portafolios = await this.portafolioService.getPortafoliosByProfesionalId(profesionalId);
