@@ -29,7 +29,7 @@ export class ProfesionalController {
   }
 
   @Get('id/:id')
-  @Roles(Role.PROFESIONAL)
+  @Roles(Role.PROFESIONAL, Role.CLIENTE)
   async getProfesionalById(@Param('id') profesionalId: number) {
     return this.profesionalService.getProfesional(profesionalId);
   }
