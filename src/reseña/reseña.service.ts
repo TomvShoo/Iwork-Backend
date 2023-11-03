@@ -25,7 +25,6 @@ export class ReseñaService {
 
       let profesional;
 
-      // const profesional = ;
       if (newResena.tipo === TipoResena.Comentario) {
         profesional = await this.profesionalRepository.findOne({ where: { id: id } })
       } else if (newResena.tipo === TipoResena.Reclamo) {
@@ -180,7 +179,9 @@ export class ReseñaService {
   // }
 
   findAll() {
-    return `This action returns all reseña`;
+    return this.resenaRepository.find({
+      relations: ['dueno']
+    });
   }
 
   findOne(id: number) {

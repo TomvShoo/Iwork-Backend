@@ -22,6 +22,7 @@ export class ProfesionController {
   }
 
   @Get(':id_profesion')
+  @Roles(Role.ADMIN)
   findProfesionalByProfesion(@Param('id_profesion', ParseIntPipe) id: number) {
     return this.profesionService.findById(id);
   }

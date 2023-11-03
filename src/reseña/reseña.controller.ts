@@ -1,17 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ReseñaService } from './reseña.service';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { throws } from 'assert';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/common/enums/rol.enum';
 
+@UseGuards(RolesGuard)
 @Controller('resena')
 export class ReseñaController {
   constructor(private readonly reseñaService: ReseñaService,
     private readonly jwtService: JwtService,) { }
 
-  @Get()
+  @Get('all')
   async findAllResenas() {
     try {
       const resenas = await this.reseñaService.findAllResenasWithProfesional();
@@ -21,7 +24,9 @@ export class ReseñaController {
       throw new Error('No se pudieron obtener las reseñas con el profesional asociado')
     }
   }
+
   @Post('subirResena')
+  @Roles(Role.PROFESIONAL)
   async uploadResena(@Body() resenaData: CreateReseñaDto, @Req() req: Request) {
     try {
       const { authorization } = req.headers;
@@ -55,6 +60,7 @@ export class ReseñaController {
   }
 
   @Get('profesional/:id')
+  @Roles(Role.PROFESIONAL)
   async findResenaByProfesionalId(@Param('id') duenoProfesionalID: number) {
     try {
       const resenas = await this.reseñaService.findResenasByProfesionalId(duenoProfesionalID);
@@ -77,6 +83,7 @@ export class ReseñaController {
   }
 
   @Delete(':resenaId')
+  @Roles(Role.CLIENTE, Role.ADMIN)
   async deleteResena(@Param('resenaId', ParseIntPipe) resenaId: number) {
     try {
       const resenaABorrar = await this.reseñaService.deleteResena(resenaId);

@@ -1,11 +1,15 @@
-import { Controller, Post, Body, Get, Param, ParseIntPipe, Patch, NotFoundException, Req } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, ParseIntPipe, Patch, NotFoundException, Req, UseGuards } from '@nestjs/common';
 import { PortafolioService } from './portafolio.service';
 import { CreatePortafolioDto } from './dto/create-portafolio.dto';
 import { ProfesionalService } from 'src/profesional/profesional.service';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UpdatePortafolioDto } from './dto/update-portafolio.dto';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/common/enums/rol.enum';
 
+@UseGuards(RolesGuard)
 @Controller('portafolio')
 export class PortafolioController {
   constructor(private readonly portafolioService: PortafolioService,
@@ -13,6 +17,7 @@ export class PortafolioController {
               private readonly jwtService: JwtService,) {}
 
   @Get(':id')
+  @Roles(Role.PROFESIONAL)
   async getPortafolio(@Param('id', ParseIntPipe) id: number) {
     const portafolio = await this.portafolioService.getPortafolio(id);
     if (!portafolio) {
@@ -22,6 +27,7 @@ export class PortafolioController {
   }
 
   @Post('upload')
+  @Roles(Role.PROFESIONAL)
   async uploadFile(@Body() portafolioData: CreatePortafolioDto, @Req() req: Request) {
     try {
       const {authorization} = req.headers
@@ -51,6 +57,7 @@ export class PortafolioController {
   }
 
   @Get('profesional/:id')
+  @Roles(Role.PROFESIONAL)
   async getPortafoliosByProfesionalId(@Param('id') profesionalId: number) {
     try {
       const portafolios = await this.portafolioService.getPortafoliosByProfesionalId(profesionalId);
@@ -67,6 +74,7 @@ export class PortafolioController {
   }
 
   @Patch(':id')
+  @Roles(Role.PROFESIONAL)
   updatePortafolio(@Param('id', ParseIntPipe) id: number, @Body() portafolio: UpdatePortafolioDto) {
     return this.portafolioService.updatePortafolio(id, portafolio);
   }

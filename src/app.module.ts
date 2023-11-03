@@ -10,6 +10,7 @@ import { PortafolioModule } from './portafolio/portafolio.module';
 import { AuthModule } from './auth/auth.module';
 import { ReseñaModule } from './reseña/reseña.module';
 import { AdminModule } from './admin/admin.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { AdminModule } from './admin/admin.module';
     PortafolioModule,
     AuthModule,
     ReseñaModule,
-    AdminModule],
+    AdminModule,
+    EmailModule],
   controllers: [AppController],
   providers: [AppService],
 })
