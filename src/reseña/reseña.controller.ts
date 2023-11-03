@@ -60,7 +60,7 @@ export class ReseñaController {
   }
 
   @Get('profesional/:id')
-  @Roles(Role.PROFESIONAL)
+  @Roles(Role.PROFESIONAL, Role.CLIENTE)
   async findResenaByProfesionalId(@Param('id') duenoProfesionalID: number) {
     try {
       const resenas = await this.reseñaService.findResenasByProfesionalId(duenoProfesionalID);
