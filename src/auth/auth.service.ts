@@ -73,6 +73,9 @@ export class AuthService {
             } else {
                 const admin = await this.adminService.findOneByEmail(correo);
                 if (admin) {
+                    if (contrasena !== admin.contrasena) {
+                        throw new UnauthorizedException('Contraseña es incorrecta para el ADMIN')                        
+                    }
                     user = admin;
                     userId = admin.id;
                     tipoCuenta = 'admin';
