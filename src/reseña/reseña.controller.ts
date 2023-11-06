@@ -26,7 +26,7 @@ export class ReseñaController {
   }
 
   @Post('subirResena')
-  @Roles(Role.PROFESIONAL)
+  @Roles(Role.PROFESIONAL, Role.CLIENTE)
   async uploadResena(@Body() resenaData: CreateReseñaDto, @Req() req: Request) {
     try {
       const { authorization } = req.headers;
