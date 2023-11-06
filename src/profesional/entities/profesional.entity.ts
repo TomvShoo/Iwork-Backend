@@ -31,7 +31,7 @@ export class Profesional {
     @Column({ default: Role.PROFESIONAL})
     tipoCuenta: string;
 
-    @OneToOne(() => Portafolio, (portafolio) => portafolio.profesional)
+    @OneToOne(() => Portafolio, (portafolio) => portafolio.profesional, { cascade: true })
     @JoinColumn()
     portafolio: Portafolio;
 
@@ -46,6 +46,6 @@ export class Profesional {
         this.tipoProfesion.push(profesion);
     }
 
-    @OneToMany(() => Reseña, resena => resena.dueno)
+    @OneToMany(() => Reseña, resena => resena.dueno, { cascade: true })
     resena: Reseña[]
 }

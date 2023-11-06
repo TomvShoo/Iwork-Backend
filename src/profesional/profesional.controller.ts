@@ -102,7 +102,7 @@ export class ProfesionalController {
       const profesion = await this.profesionService.findById(profesionId);
 
       if (profesional && profesion) {
-        await this.profesionalService.deleteProfesion(profesionalId, profesion);
+        await this.profesionalService.addProfesion(profesionalId, profesion);
         return { message: 'Profesión asignada con éxito' };
       } else {
         return { message: 'No se pudo encontrar el profesional o la profesión' };

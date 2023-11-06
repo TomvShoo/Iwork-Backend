@@ -31,6 +31,6 @@ export class User {
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
-    @OneToMany(() => Reseña, resena => resena.escritor)
+    @OneToMany(() => Reseña, resena => resena.escritor, { cascade: true })
     resena: Reseña[]
 }

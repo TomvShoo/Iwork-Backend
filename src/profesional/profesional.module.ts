@@ -8,12 +8,14 @@ import { ProfesionService } from 'src/profesion/profesion.service';
 import { Profesion } from 'src/profesion/entities/profesion.entity';
 import { UsersService } from 'src/users/users.service';
 import { ProfesionModule } from 'src/profesion/profesion.module';
+import { Reseña } from 'src/reseña/entities/reseña.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Profesional,
-      Profesion
+      Profesion,
+      Reseña
     ])
   ],
   controllers: [ProfesionalController],

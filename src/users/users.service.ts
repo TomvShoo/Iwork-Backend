@@ -1,16 +1,18 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Profesional } from 'src/profesional/entities/profesional.entity';
+import { Reseña } from 'src/reseña/entities/reseña.entity';
 
 @Injectable()
 export class UsersService {
 
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
-        @InjectRepository(Profesional) private readonly profesionalRepository: Repository<Profesional>) { }
+        @InjectRepository(Profesional) private readonly profesionalRepository: Repository<Profesional>,
+        @InjectRepository(Reseña) private resenaRepository: Repository<Reseña>,) { }
 
     async createUser(user: CreateUserDto) {
         const userfound = await this.userRepository.findOne({
@@ -66,13 +68,22 @@ export class UsersService {
     }
 
     async deleteUser(id: number) {
-        const result = await this.userRepository.delete({ id });
-
-        if (result.affected === 0) {
-            return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND)
+        const user = await this.userRepository.find({
+            where: {id},
+            relations: ['resena']
+        });
+        if (!user) {
+            throw new NotFoundException(`cliente con el id ${id} no encontrado`)
         }
 
-        return result
+        const resenas = await this.resenaRepository.find({ where: {userid: id} });
+        await Promise.all(resenas.map(async (resena) => {
+            await this.resenaRepository.delete(resena.resenaId);
+        }));
+        
+        await this.userRepository.remove(user);
+
+        return { message: `cliente con el id: ${id} fue eliminado con todo lo relacionado a el.` }
     }
 
     async updateUser(id: number, user: UpdateUserDto) {

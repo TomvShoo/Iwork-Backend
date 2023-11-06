@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { CreateProfesionalDto } from './dto/create-profesional.dto';
 import { UpdateProfesionalDto } from './dto/update-profesional.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,14 +6,15 @@ import { Portafolio } from 'src/portafolio/entities/portafolio.entity';
 import { Repository } from 'typeorm';
 import { Profesional } from './entities/profesional.entity';
 import { Profesion } from 'src/profesion/entities/profesion.entity';
+import { Reseña } from 'src/reseña/entities/reseña.entity';
 
 
 @Injectable()
 export class ProfesionalService {
 
   constructor(
-    @InjectRepository(Profesional) private profesionalRepository: Repository<Profesional>
-
+    @InjectRepository(Profesional) private profesionalRepository: Repository<Profesional>,
+    @InjectRepository(Reseña) private resenaRepository: Repository<Reseña>,
   ) { }
 
   async createProfesional(profesional: CreateProfesionalDto) {
@@ -32,7 +33,11 @@ export class ProfesionalService {
   }
 
   getProfesionals() {
-    return this.profesionalRepository.find()
+    return this.profesionalRepository
+      .createQueryBuilder('profesional')
+      .leftJoinAndSelect('profesional.tipoProfesion', 'profesion')
+      .leftJoinAndSelect('profesional.resena', 'resena')
+      .getMany()
   }
 
   async findOneByEmail(correo: string) {
@@ -48,11 +53,12 @@ export class ProfesionalService {
   }
 
   async getProfesional(id: number) {
-      return await this.profesionalRepository
-        .createQueryBuilder('profesional')
-        .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') 
-        .where('profesional.id = :id', { id })
-        .getOne();
+    return await this.profesionalRepository
+      .createQueryBuilder('profesional')
+      .leftJoinAndSelect('profesional.tipoProfesion', 'profesion')
+      .leftJoinAndSelect('profesional.resena', 'resena')
+      .where('profesional.id = :id', { id })
+      .getOne();
   }
 
   async searchProfesionales(query: string) {
@@ -75,20 +81,20 @@ export class ProfesionalService {
 
   async updateProfesional(id: number, profesional: UpdateProfesionalDto) {
     const profesionalFound = await this.profesionalRepository.findOne({
-        where: {
-            id
-        }
+      where: {
+        id
+      }
     })
 
     if (!profesionalFound) {
-        return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
+      return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
     }
 
     const updateProfesional = Object.assign(profesionalFound, profesional);
     return this.profesionalRepository.save(updateProfesional);
-}
+  }
 
-  async deleteProfesion(id: number, profesiones: Profesion[]): Promise<Profesional | undefined> {
+  async addProfesion(id: number, profesiones: Profesion[]): Promise<Profesional | undefined> {
     try {
       const profesional = await this.profesionalRepository.findOne({ where: { id }, relations: ["tipoProfesion"] });
       if (!profesional) {
@@ -105,22 +111,22 @@ export class ProfesionalService {
       throw new Error('No se pudo actualizar el profesional');
     }
   }
-  
+
   async eliminarProfesion(profesionalId: number, profesionId: number): Promise<any> {
     try {
       const profesional = await this.profesionalRepository.findOne({
         where: { id: profesionalId },
         relations: ["tipoProfesion"]
       });
-  
+
       if (!profesional) {
         throw new Error('No se encontró al profesional');
       }
-  
+
       const removedProfesion = profesional.tipoProfesion.find(
         (profesion) => profesion.id_profesion === profesionId
       );
-  
+
       if (removedProfesion) {
         profesional.tipoProfesion = profesional.tipoProfesion.filter(
           (profesion) => profesion.id_profesion !== profesionId
@@ -141,73 +147,88 @@ export class ProfesionalService {
   }
 
   async deleteProfesional(id: number) {
-    const result = await this.profesionalRepository.delete({ id });
-
-    if (result.affected === 0) {
-      return new HttpException('Usuario nop encontrado', HttpStatus.NOT_FOUND)
+    const profesional = await this.profesionalRepository.find({ 
+      where: {id},
+      relations: ['resena', 'tipoProfesion', 'portafolio'], 
+    });
+    if (!profesional) {
+      throw new NotFoundException(`Profesional con el id ${id} no encontrado`)
     }
 
-    return result
+    const resenas = await this.resenaRepository.find({ where: {dueno: { id }} });
+    await Promise.all(resenas.map(async (resena) => {
+      await this.resenaRepository.delete(resena.resenaId);
+    }))
+
+    await this.profesionalRepository.remove(profesional);
+
+    // const result = await this.profesionalRepository.delete({ id });
+
+    // if (result.affected === 0) {
+    //   return new HttpException('Usuario nop encontrado', HttpStatus.NOT_FOUND)
+    // }
+
+    return { message: `profesional con el id: ${id} fue eliminado con todo lo relacionado a el.` }
   }
 }
 
-  // async getProfesionalById(profesionalId: number): Promise<Profesional> {
-  //   try {
-  //     return await this.profesionalRepository
-  //       .createQueryBuilder('profesional')
-  //       .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Asegúrate de reemplazar 'profesiones' con el nombre real de tu relación
-  //       .where('profesional.profesionalId = :profesionalId', { profesionalId })
-  //       .getOne();      
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }
+// async getProfesionalById(profesionalId: number): Promise<Profesional> {
+//   try {
+//     return await this.profesionalRepository
+//       .createQueryBuilder('profesional')
+//       .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Asegúrate de reemplazar 'profesiones' con el nombre real de tu relación
+//       .where('profesional.profesionalId = :profesionalId', { profesionalId })
+//       .getOne();
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// }
 
-  // async findOneByEmail(correo: string) {
-  //   try {
-  //     return await this.profesionalRepository.findOne({
-  //       where: {
-  //         correo: correo
-  //       }
-  //     })
+// async findOneByEmail(correo: string) {
+//   try {
+//     return await this.profesionalRepository.findOne({
+//       where: {
+//         correo: correo
+//       }
+//     })
 
-  //   } catch (error) {
-  //     console.log(error.message);
+//   } catch (error) {
+//     console.log(error.message);
 
-  //   }
-  // }
+//   }
+// }
 
-  // async findProfesionalWithProfesion(profesionalId: number): Promise<Profesional> {
-  //   return this.profesionalRepository
-  //     .createQueryBuilder('profesional')
-  //     .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Carga la relación con la profesión
-  //     .where('profesional.profesionalId = :id', { id: profesionalId })
-  //     .getOne();
-  // }
+// async findProfesionalWithProfesion(profesionalId: number): Promise<Profesional> {
+//   return this.profesionalRepository
+//     .createQueryBuilder('profesional')
+//     .leftJoinAndSelect('profesional.tipoProfesion', 'profesion') // Carga la relación con la profesión
+//     .where('profesional.profesionalId = :id', { id: profesionalId })
+//     .getOne();
+// }
 
-  // async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
-  //   const profesionalFound = await this.profesionalRepository.findOne({
-  //     where: {
-  //       profesionalId
-  //     }
-  //   })
+// async updateProfesional(profesionalId: number, profesional: UpdateProfesionalDto) {
+//   const profesionalFound = await this.profesionalRepository.findOne({
+//     where: {
+//       profesionalId
+//     }
+//   })
 
-  //   if (!profesionalFound) {
-  //     return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
-  //   }
+//   if (!profesionalFound) {
+//     return new HttpException('Usuario no econtrado :C', HttpStatus.NOT_FOUND);
+//   }
 
-  //   const updateprofesional = Object.assign(profesionalFound, profesional);
-  //   return this.profesionalRepository.save(updateprofesional);
-  // }
+//   const updateprofesional = Object.assign(profesionalFound, profesional);
+//   return this.profesionalRepository.save(updateprofesional);
+// }
 
-  // async findProfesionesByProfesionalId(profesionalId: number): Promise<Profesion[]> {
-  //   const profesional = await this.profesionalRepository.findOne({
-  //     where: { profesionalId },
-  //     relations: ["tipoProfesion"]
-  //   });
-  //   if (profesional) {
-  //     return profesional.tipoProfesion;
-  //   } else {
-  //     return [];
-  //   }
-  // }
+// async findProfesionesByProfesionalId(profesionalId: number): Promise<Profesion[]> {
+//   const profesional = await this.profesionalRepository.findOne({
+//     where: { profesionalId },
+//     relations: ["tipoProfesion"]
+//   });
+//   if (profesional) {
+//     return profesional.tipoProfesion;
+//   } else {
+//     return [];
+//   }
+// }

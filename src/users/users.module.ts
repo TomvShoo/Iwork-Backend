@@ -4,12 +4,14 @@ import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Profesional } from 'src/profesional/entities/profesional.entity';
+import { Reseña } from 'src/reseña/entities/reseña.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User,
-      Profesional
+      Profesional,
+      Reseña
     ]),
   ],
   controllers: [UsersController],
