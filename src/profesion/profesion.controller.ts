@@ -27,7 +27,7 @@ export class ProfesionController {
     return this.profesionService.findById(id);
   }
 
-  @Delete(':id_profesion')
+  @Delete('eliminar/:id_profesion')
   @Roles(Role.ADMIN)
   deleteProfesion(@Param('id_profesion', ParseIntPipe) id: number) {
     return this.profesionService.deleteProfesion(id);
