@@ -1,5 +1,5 @@
 import { Profesional } from "../../profesional/entities/profesional.entity";
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn, JoinTable } from "typeorm";
 
 @Entity()
 export class Portafolio {
@@ -20,7 +20,6 @@ export class Portafolio {
     CreatedAt: Date
 
     @OneToOne(() => Profesional, (profesional) => profesional.portafolio)
-    @JoinColumn()
     profesional: Profesional
     
     @Column({ nullable: false })

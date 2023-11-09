@@ -18,8 +18,8 @@ import { EmailModule } from './email/email.module';
       type: 'mysql',
       host: 'iworkdb.cmf8hed8lh5v.us-east-1.rds.amazonaws.com',
       port: 3306,
-      username: 'admin',
-      password: 'iworkdbcontra',
+      username: 'admin', 
+      password: 'iworkdbcontra', 
       database: 'iworkdb',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true 
