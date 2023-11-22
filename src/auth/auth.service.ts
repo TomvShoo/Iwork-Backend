@@ -27,7 +27,11 @@ export class AuthService {
         const profesionalExist = await this.profesionalService.findOneByEmail(correo);
 
         if (userExist || profesionalExist) {
-            throw new BadRequestException('Usuario ya existe');
+            // throw new BadRequestException('Usuario ya existe');
+            return {
+                success: false,
+                message: "El correo ingresado ya existe :c"
+            }
         }
 
         let newUser;
