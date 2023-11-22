@@ -9,7 +9,9 @@ import { UpdateProfesionalDto } from './dto/update-profesional.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/common/enums/rol.enum';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
+@UseGuards(AuthGuard)
 @UseGuards(RolesGuard)
 @Controller('profesional')
 export class ProfesionalController {
@@ -30,8 +32,8 @@ export class ProfesionalController {
 
   @Get('id/:id')
   @Roles(Role.PROFESIONAL, Role.CLIENTE)
-  async getProfesionalById(@Param('id') profesionalId: number) {
-    return this.profesionalService.getProfesional(profesionalId);
+  async getProfesionalById(@Param('id', ParseIntPipe) profesionalId: number) { // @Req() profesionalId: Request AGREGAR O IMPLEMENTAR ESTO
+    return this.profesionalService.getProfesional(profesionalId); // user.id
   }
 
   @Get('search')
@@ -118,7 +120,7 @@ export class ProfesionalController {
   @Roles(Role.PROFESIONAL)
   async eliminarProfesion(
     @Param('profesionId') profesionId: number,
-    @Req() req: Request,
+    @Req() req: Request, // 
   ): Promise<any> {
     try {
       const { authorization } = req.headers;

@@ -19,7 +19,7 @@ export class Portafolio {
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     CreatedAt: Date
 
-    @OneToOne(() => Profesional, (profesional) => profesional.portafolio)
+    @OneToOne(() => Profesional, (profesional) => profesional.portafolio) // id de portafolio puede 
     profesional: Profesional
     
     @Column({ nullable: false })

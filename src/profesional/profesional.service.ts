@@ -25,7 +25,7 @@ export class ProfesionalService {
     })
 
     if (profesionalFound) {
-      return new HttpException('Usuario ya existe', HttpStatus.CONFLICT)
+      return new HttpException('Usuario ya existe', HttpStatus.BAD_REQUEST)
     }
 
     const newProfesional = this.profesionalRepository.create(profesional)
